@@ -1,6 +1,8 @@
 *.pyc
 *.swp
 *.log
+*.in
 __pycache__
 log
 doc
+test.in
