@@ -2,7 +2,9 @@
 *.swp
 *.log
 *.in
+*.out
 __pycache__
 log
 doc
 test.in
+test.out
