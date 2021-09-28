@@ -1,1 +1,6 @@
 *.pyc
+*.swp
+*.log
+__pycache__
+log
+doc
