@@ -1,13 +1,15 @@
 import sys
 from values import *
 from laxer import Laxer
-from token import Token
 
 def main():
 	input = ''
 	if LOCAL:
 		inputfile = open('test.in', 'r')
 		input = inputfile.read()
+	else:
+		pass
+	
 	lex = Laxer(input)
 	f = open('test.out', 'w')
 	while lex.isEnd() == False:
