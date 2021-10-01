@@ -8,13 +8,17 @@ def main():
 		inputfile = open('test.in', 'r')
 		input = inputfile.read()
 	else:
-		pass
+		input = sys.argv[1]
 	
 	lex = Laxer(input)
-	f = open('test.out', 'w')
+	if LOCAL:
+		f = open('test.out', 'w')
 	while lex.isEnd() == False:
 		token = lex.getToken()
-		print(token, file = f)
+		if LOCAL:
+			print(token, file = f)
+		else:
+			print(token)
 		if token.lexeme == 'Err':
 			break
 
