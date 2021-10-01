@@ -43,7 +43,7 @@ class Laxer:
 				return Token('=')
 		elif ch.isdigit():
 			val = ch
-			while True:
+			while self.isEnd() == False:
 				ch = self.getchar()
 				if ch.isdigit() == False:
 					self.redo()
@@ -53,7 +53,7 @@ class Laxer:
 			# Number
 		elif ch=='_' or ch.isalpha():
 			val = ch
-			while True:
+			while self.isEnd() == False:
 				ch = self.getchar()
 				if ch == '_' or ch.isdigit() or ch.isalpha():
 					val += ch
