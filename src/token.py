@@ -24,15 +24,14 @@ class Token:
 			self.lexeme = SY_TABLE[s]
 		elif s in KEY_TABLE.keys():
 			self.lexeme = KEY_TABLE[s]
-		elif len(s) == 1 and s.isalpha() == False and s.isdigit() == False:
+		elif s.isdigit():
+			self.lexeme = 'Number'
+			self.number = s
+		elif len(s) == 1 and s.isalpha() == False and s != '_':
 			self.lexeme = 'Err'
 		else:
-			if s.isdigit():
-				self.lexeme = 'Number'
-				self.number = s
-			else:
-				self.lexeme = 'Ident'
-				self.name = s
+			self.lexeme = 'Ident'
+			self.name = s
 
 	def __str__(self):
 		if self.lexeme == 'Ident':
