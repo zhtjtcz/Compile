@@ -8,7 +8,8 @@ def main():
 		inputfile = open('test.in', 'r')
 		input = inputfile.read()
 	else:
-		input = sys.argv[1]
+		inputfile = open(sys.argv[1], 'r')
+		input = inputfile.read()
 	
 	lex = Laxer(input)
 	if LOCAL:
