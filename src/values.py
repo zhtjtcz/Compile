@@ -1,4 +1,6 @@
 import os
-
-LOCAL = (os.environ['USER'] == 'oem')
+if 'USER' in os.environ.keys():
+	LOCAL = (os.environ['USER'] == 'oem')
+else:
+	LOCAL = False
 # ENCODING = 'utf-8'
