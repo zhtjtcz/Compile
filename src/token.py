@@ -24,7 +24,7 @@ class Token:
 			self.lexeme = SY_TABLE[s]
 		elif s in KEY_TABLE.keys():
 			self.lexeme = KEY_TABLE[s]
-		elif len(s) == 1 and s.isalpha() == False:
+		elif len(s) == 1 and s.isalpha() == False and s.isdigit() == False:
 			self.lexeme = 'Err'
 		else:
 			if s.isdigit():
