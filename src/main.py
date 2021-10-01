@@ -16,6 +16,8 @@ def main():
 		f = open('test.out', 'w')
 	while lex.isEnd() == False:
 		token = lex.getToken()
+		if token == '':
+			break
 		if LOCAL:
 			print(token, file = f)
 		else:
