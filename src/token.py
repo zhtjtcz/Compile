@@ -6,7 +6,7 @@ SY_TABLE = {
 
 KEY_TABLE = {
 	'if':'If', 'else':'Else', 'while':'While', 'continue':'Continue',
-	'return':'Return'
+	'return':'Return', 'break':'Break'
 }
 
 class Token:
