@@ -59,24 +59,6 @@ class Laxer:
 		else:
 			return Token('Error!')
 
-class Symbol:
-	def __init__(self, tokens):
-		self.tokens = tokens[::-1]
-		self.last = None
-	
-	def isEmpty(self):
-		return len(self.tokens) == 0
-
-	def undo(self):
-		self.tokens.append(self.last)
-		self.last = None
-
-	def getSymbol(self):
-		if len(self.tokens) == 0:
-			exit(-1)
-		self.last = self.tokens[-1]
-		return self.tokens.pop()
-
 def getTokens(input, outputFile):
 	lex = Laxer(input)
 	tokens = []
@@ -90,4 +72,4 @@ def getTokens(input, outputFile):
 			exit(1)	# Token error
 		else:
 			tokens.append(token)
-	return Symbol(tokens)
+	return tokens
