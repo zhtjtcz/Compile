@@ -12,7 +12,7 @@ def main():
 		inputfile = open(sys.argv[1], 'r')
 		input = inputfile.read()
 	input = tool.remove(input)
-	print(input)
+	# print(input)
 	'''
 	lex = Laxer(input)
 	if LOCAL:
