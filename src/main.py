@@ -14,8 +14,7 @@ def main():
 		input = inputfile.read() + '\n'
 		outputFile = open(sys.argv[2], 'w')
 	input = lexical.tool.remove(input)
-	symbol = lexical.getTokens(input, outputFile)
-	print(symbol.tokens)
+	symbol = lexical.laxer.getTokens(input, outputFile)
 
 if __name__ == "__main__":
 	main()

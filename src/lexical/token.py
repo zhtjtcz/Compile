@@ -40,7 +40,7 @@ class Token:
 			self.lexeme = KEY_TABLE[s]
 		elif s[0].isdigit():
 			self.lexeme = 'Number'
-			if s[0] == '0':
+			if s[0] == '0' and len(s)>1 and s[1] not in ['x', 'X']:
 				s = '0o' + s[1:]
 			try:
 				n = eval(s)

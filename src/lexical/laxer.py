@@ -1,6 +1,6 @@
-from token import Token
-from ..values import *
-from token import SY_TABLE,BREAK_TABLE
+from lexical.token import Token
+from values import *
+from lexical.token import SY_TABLE,BREAK_TABLE
 
 class Laxer:
 	def __init__(self, s):
