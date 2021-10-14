@@ -1,3 +1,5 @@
+'''
+Full table?
 SY_TABLE = {
 	'=':'Assign', ';':'Semicolon', '(':'LPar', ')': 'RPar',
 	'{':'LBrace', '}':'RBrace', '+':'Plus', '*':'Mult',
@@ -8,6 +10,16 @@ KEY_TABLE = {
 	'if':'If', 'else':'Else', 'while':'While', 'continue':'Continue',
 	'return':'Return', 'break':'Break'
 }
+'''
+
+SY_TABLE = {
+	';':'Semicolon', '(':'LPar', ')': 'RPar',	'{':'LBrace', '}':'RBrace'
+}
+
+KEY_TABLE = {
+	'return':'Return', 'int': 'Int', 'main':'Main'
+}
+
 
 class Token:
 	def __init__(self, s):

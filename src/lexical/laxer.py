@@ -1,4 +1,5 @@
 from token import Token
+from ..values import *
 
 class Laxer:
 	def __init__(self, s):
@@ -64,3 +65,18 @@ class Laxer:
 			# Symbol
 		else:
 			return Token('Error!')
+
+def getTokens(input, outputFile):
+	lex = Laxer(input)
+	tokens = []
+	while lex.isEnd() == False:
+		token = lex.getToken()
+		if token == '':
+			break
+		print(token, file = outputFile)
+		if token.lexeme == 'Err':
+			exit(1)
+			# Token error
+		else:
+			tokens.append(token)
+	return tokens
