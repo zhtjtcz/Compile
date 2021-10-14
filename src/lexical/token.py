@@ -38,9 +38,15 @@ class Token:
 			self.lexeme = SY_TABLE[s]
 		elif s in KEY_TABLE.keys():
 			self.lexeme = KEY_TABLE[s]
-		elif s.isdigit():
+		elif s[0].isdigit():
 			self.lexeme = 'Number'
-			self.number = s
+			if s[0] == '0':
+				s = '0o' + s[1:]
+			try:
+				n = eval(s)
+			except:
+				exit(1)
+			self.number = n
 		elif len(s) == 1 and s.isalpha() == False and s != '_':
 			self.lexeme = 'Err'
 		else:
