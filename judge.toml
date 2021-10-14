@@ -3,5 +3,5 @@
 image = { source = "dockerfile", path = ".", tag = "pascal-lex-example" }
 
 run = [
-  "python main.py $input",
+  "python main.py $input $ir",
 ]
