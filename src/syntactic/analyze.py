@@ -26,23 +26,29 @@ class Analyzer:
 	CompUnit -> FuncDef
 	'''
 	def CompUnit(self):
-		print("ComUnit!")
 		self.FuncDef()
+		if self.token == None:
+			exit(0)
+		else:
+			exit(1)
 	
 	'''
 	FuncDef  -> FuncType Ident '(' ')' Block
 	'''
 	def FuncDef(self):
-		print("Funcdef!")
+		print("define dso_local ", file = self.outputfile, end = '')
 		self.FuncType()
 		if self.token == None or self.token.name != 'Main':
 			exit(1)
+		print("@main ", file = self.outputfile, end = '')
 		self.getSymbol()
 		if self.token == None or self.token.name != 'LPar':
 			exit(1)
+		print("( ", file = self.outputfile, end = '')
 		self.getSymbol()
 		if self.token == None or self.token.name != 'RPar':
 			exit(1)
+		print(") ", file = self.outputfile, end = '')
 		self.getSymbol()
 		self.Block()
 
@@ -50,22 +56,23 @@ class Analyzer:
 	FuncType -> 'int'
 	'''
 	def FuncType(self):
-		print("FuncType!")
 		if self.token == None or self.token.name != 'Int':
 			exit(1)
+		print("i32", file = self.outputfile, end = '')
 		self.getSymbol()
 	
 	'''
 	Block -> '{' Stmt '}'
 	'''
 	def Block(self):
-		print("Block!")
 		if self.token == None or self.token.name != 'LBrace':
 			exit(1)
+		print("{\n", file = self.outputfile, end = '')
 		self.getSymbol()
 		self.Stmt()
 		if self.token == None or self.token.name != 'RBrace':
 			exit(1)
+		print("}\n", file = self.outputfile, end = '')
 		self.getSymbol()
 
 	'''
@@ -75,9 +82,11 @@ class Analyzer:
 		print("Stmt!")
 		if self.token == None or self.token.name != 'Return':
 			exit(1)
+		print("ret ", file = self.outputfile, end = '')
 		self.getSymbol()
 		if self.token == None or self.token.lexeme != 'Number':
 			exit(1)
+		print("i32 %d"%(self.token.number), file = self.outputfile, end = '')
 		self.getSymbol()
 		if self.token == None or self.token.name != 'Semicolon':
 			exit(1)
