@@ -16,6 +16,7 @@ def main():
 	input = lexical.tool.remove(input)
 	tokens = lexical.laxer.getTokens(input, outputFile)
 	analyzer = syntactic.analyze.Analyzer(tokens, outputFile)
+	analyzer.Ready()
 	analyzer.CompUnit()
 
 if __name__ == "__main__":
