@@ -12,6 +12,8 @@ KEY_TABLE = {
 }
 '''
 
+BREAK_TABLE = ['\n', '\t', ' ', '\r']
+
 SY_TABLE = {
 	';':'Semicolon', '(':'LPar', ')': 'RPar',	'{':'LBrace', '}':'RBrace'
 }

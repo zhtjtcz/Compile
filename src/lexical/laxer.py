@@ -1,5 +1,6 @@
 from token import Token
 from ..values import *
+from token import SY_TABLE,BREAK_TABLE
 
 class Laxer:
 	def __init__(self, s):
@@ -28,30 +29,23 @@ class Laxer:
 			# End of the code
 			
 			ch = self.getchar()
-			if ch in ['\n', '\t', ' ', '\r']:
+			if ch in BREAK_TABLE:
 				continue
 			self.redo()
 			break
 		
 		ch = self.getchar()
-		if ch in [';', '(', ')', '{', '}', '+', '-', '*', '/', '<', '>']:
-			return Token(ch)
-		elif ch == '=':
-			if self.getchar() == '=':
-				return Token('==')
-			else:
-				self.redo()
-				return Token('=')
+		if ch in SY_TABLE.keys():
+			return Token(ch)	# simple sign
 		elif ch.isdigit():
 			val = ch
 			while self.isEnd() == False:
 				ch = self.getchar()
-				if ch.isdigit() == False:
+				if ch in BREAK_TABLE or ch in SY_TABLE.keys():
 					self.redo()
 					break
 				val = val + ch
-			return Token(val)
-			# Number
+			return Token(val)	# Number
 		elif ch=='_' or ch.isalpha():
 			val = ch
 			while self.isEnd() == False:
@@ -61,8 +55,7 @@ class Laxer:
 				else:
 					self.redo()
 					break
-			return Token(val)
-			# Symbol
+			return Token(val)	# Symbol
 		else:
 			return Token('Error!')
 
@@ -84,7 +77,6 @@ class Symbol:
 		self.last = self.tokens[-1]
 		return self.tokens.pop()
 
-
 def getTokens(input, outputFile):
 	lex = Laxer(input)
 	tokens = []
@@ -98,4 +90,4 @@ def getTokens(input, outputFile):
 			exit(1)	# Token error
 		else:
 			tokens.append(token)
-	return tokens
+	return Symbol(tokens)
