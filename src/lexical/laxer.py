@@ -1,5 +1,6 @@
 from values import *
-import ply.lex as lex
+import lexical.lex as lex
+# import ply.lex as lex
 
 reserved = {
 	'main': 'Main',
