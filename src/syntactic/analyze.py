@@ -45,17 +45,17 @@ class Analyzer:
 		print("define dso_local ", file = self.outputfile, end = '')
 		self.FuncType()
 		
-		if self.token == None or self.token.lexeme != 'Main':
+		if self.token == None or self.token.type != 'Main':
 			exit(1)
 		print("@main ", file = self.outputfile, end = '')
 		self.getSymbol()
 
-		if self.token == None or self.token.lexeme != 'LPar':
+		if self.token == None or self.token.type != 'LPar':
 			exit(1)
 		print("(", file = self.outputfile, end = '')
 		self.getSymbol()
 		
-		if self.token == None or self.token.lexeme != 'RPar':
+		if self.token == None or self.token.type != 'RPar':
 			exit(1)
 		print(")", file = self.outputfile, end = '')
 		self.getSymbol()
@@ -66,7 +66,7 @@ class Analyzer:
 	FuncType -> 'int'
 	'''
 	def FuncType(self):
-		if self.token == None or self.token.lexeme != 'Int':
+		if self.token == None or self.token.type != 'Int':
 			exit(1)
 		print("i32 ", file = self.outputfile, end = '')
 		self.getSymbol()
@@ -75,13 +75,13 @@ class Analyzer:
 	Block -> '{' Stmt '}'
 	'''
 	def Block(self):
-		if self.token == None or self.token.lexeme != 'LBrace':
+		if self.token == None or self.token.type != 'LBrace':
 			exit(1)
 		print("{\n", file = self.outputfile, end = '')
 		self.getSymbol()
 
 		self.Stmt()
-		if self.token == None or self.token.lexeme != 'RBrace':
+		if self.token == None or self.token.type != 'RBrace':
 			exit(1)
 		print("}\n", file = self.outputfile, end = '')
 		self.getSymbol()
@@ -90,17 +90,17 @@ class Analyzer:
 	Stmt -> 'return' Number ';'
 	'''
 	def Stmt(self):
-		if self.token == None or self.token.lexeme != 'Return':
+		if self.token == None or self.token.type != 'Return':
 			exit(1)
 		print("ret ", file = self.outputfile, end = '')
 		self.getSymbol()
 
-		if self.token == None or self.token.lexeme != 'Number':
+		if self.token == None or self.token.type != 'Number':
 			exit(1)
-		print("i32 %d"%(self.token.number), file = self.outputfile, end = '')
+		print("i32 %d"%(self.token.value), file = self.outputfile, end = '')
 		self.getSymbol()
 
-		if self.token == None or self.token.lexeme != 'Semicolon':
+		if self.token == None or self.token.type != 'Semicolon':
 			exit(1)
 		print("\n", file = self.outputfile, end = '')
 		self.getSymbol()
