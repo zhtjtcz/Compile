@@ -1,75 +1,58 @@
-from lexical.token import Token
 from values import *
-from lexical.token import SY_TABLE,BREAK_TABLE
+import ply.lex as lex
 
-class Laxer:
-	def __init__(self, s):
-		self.code = s
-		self.pre=''
+reserved = {
+	'main': 'MAIN',
+	'int': 'INT',
+	'return': 'RETURN'
+}
 
-	def isEnd(self):
-		return len(self.code) == 0
-	
-	def getchar(self):
-		if len(self.code) == 0:
-			return ''
-		ch = self.code[0]
-		self.pre = ch
-		self.code = self.code[1:]
-		return ch
+def t_NUMBER(t):
+	r'0[xX][0-9a-fA-F]+|^[0-9]*$'
+	if t.value[0] == '0' and len(t.value)>1 and t.value[1] not in ['x', 'X']:
+		t.value = '0o' + t.value[1:]
+	try:
+		t.value = eval(t.value)
+	except:
+		exit(1)
+	return t
 
-	def redo(self):
-		self.code = self.pre + self.code
-		self.pre = ''
+def t_ID(t):
+	r'[a-zA-Z_][a-zA-Z_0-9]*'
+	t.type = reserved.get(t.value,'ID')# Check for reserved words
+	if t.type == 'ID':
+		exit(1)
+	return t
 
-	def getToken(self):
-		while True:
-			if self.isEnd():
-				return ''
-			# End of the code
-			
-			ch = self.getchar()
-			if ch in BREAK_TABLE:
-				continue
-			self.redo()
-			break
-		
-		ch = self.getchar()
-		if ch in SY_TABLE.keys():
-			return Token(ch)	# simple sign
-		elif ch.isdigit():
-			val = ch
-			while self.isEnd() == False:
-				ch = self.getchar()
-				if ch in BREAK_TABLE or ch in SY_TABLE.keys():
-					self.redo()
-					break
-				val = val + ch
-			return Token(val)	# Number
-		elif ch=='_' or ch.isalpha():
-			val = ch
-			while self.isEnd() == False:
-				ch = self.getchar()
-				if ch == '_' or ch.isdigit() or ch.isalpha():
-					val += ch
-				else:
-					self.redo()
-					break
-			return Token(val)	# Symbol
-		else:
-			return Token('Error!')
+def t_newline(t):
+	r'\n+'
+	t.lexer.lineno += len(t.value)
+
+def t_error(t):
+	print("Illegal character '%s'" % t.value[0])
+	exit(1)
 
 def getTokens(input, outputFile):
-	lex = Laxer(input)
 	tokens = []
-	while lex.isEnd() == False:
-		token = lex.getToken()
-		if token == '':
-			break
+
+	tokens = [
+		'NUMBER', 'LPar', 'RPar',
+		'LBrace', 'RBrace', 'Semicolon', 'ID'
+	] + list(reserved.values())
+
+	t_LPar  = r'\('
+	t_RPar  = r'\)'
+	t_LBrace = r'\{'
+	t_RBrace = r'\}'
+	t_Semicolon = r'\;'
+	t_ignore  = ' \t'
+	lexer = lex.lex()
+	lexer.input(input)
+	while True:
+		token = lexer.token()
+		if not token:
+			break	  # No more input
 		if LOCAL:
-			print(token, file = outputFile)
-		if token.lexeme == 'Err':
-			exit(1)	# Token error
-		else:
-			tokens.append(token)
+			print(token, file=outputFile)
+		tokens.append(token)
 	return tokens
