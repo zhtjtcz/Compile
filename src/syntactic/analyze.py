@@ -87,7 +87,7 @@ class Analyzer:
 		self.getSymbol()
 
 	'''
-	Stmt -> 'return' Number ';'
+	Stmt -> 'return' Exp ';'
 	'''
 	def Stmt(self):
 		if self.token == None or self.token.type != 'Return':
@@ -95,12 +95,70 @@ class Analyzer:
 		print("ret ", file = self.outputfile, end = '')
 		self.getSymbol()
 
+		'''
 		if self.token == None or self.token.type != 'Number':
 			exit(1)
 		print("i32 %d"%(self.token.value), file = self.outputfile, end = '')
 		self.getSymbol()
+		'''
 
 		if self.token == None or self.token.type != 'Semicolon':
 			exit(1)
 		print("\n", file = self.outputfile, end = '')
 		self.getSymbol()
+	
+	'''
+	Exp	-> AddExp
+	'''
+	def Exp(self):
+		pass
+
+	'''
+	AddExp	-> MulExp 
+            | AddExp ('+' | '−') MulExp
+	'''
+	def AddExp(self):
+		pass
+
+	'''
+	MulExp  -> UnaryExp
+            | MulExp ('*' | '/' | '%') UnaryExp
+	'''
+	def MulExp(self):
+		pass
+
+	'''
+	UnaryExp	-> PrimaryExp | UnaryOp UnaryExp
+	'''
+	def UnaryExp(self):
+		
+		pass
+	
+	'''
+	PrimaryExp -> '(' Exp ')' | Number
+	'''
+	def PrimaryExp(self):
+		if self.token == None or self.token.type not in ['LPar', 'Number']:
+			exit(1)
+		if self.token.type == 'Number':
+			num = str(self.token.value)
+			self.getSymbol()
+			return num
+		else:
+			self.getSymbol()
+			exp = self.Exp()
+			if self.token.type != 'Rpar':
+				exit(1)
+			self.getSymbol()
+			return '(' + exp + ')'
+
+	'''
+	UnaryOp	-> '+' | '-'
+	'''
+	def UnaryOp(self):
+		if self.token == None or self.token.type not in ['Plus', 'Minus']:
+			exit(1)
+		op = self.tolen.value
+		self.getSymbol()
+		return op
+		

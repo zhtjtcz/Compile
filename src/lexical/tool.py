@@ -38,3 +38,13 @@ def remove(s):
 	# Error
 
 	return out
+
+def caclulate(exp):
+	exp = exp.replace('/', '//')
+	if '**' in exp:
+		exit(1)
+	try:
+		value = eval(exp)
+		return value
+	except:
+		exit(1)
