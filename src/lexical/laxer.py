@@ -38,7 +38,8 @@ def getTokens(input, outputFile):
 
 	tokens = [
 		'Number', 'LPar', 'RPar',
-		'LBrace', 'RBrace', 'Semicolon', 'ID'
+		'LBrace', 'RBrace', 'Semicolon', 'ID',
+		'Plus', 'Minus', 'Times', 'Div', 'Mod'
 	] + list(reserved.values())
 
 	t_LPar  = r'\('
@@ -47,6 +48,12 @@ def getTokens(input, outputFile):
 	t_RBrace = r'\}'
 	t_Semicolon = r'\;'
 	t_ignore  = ' \t'
+	t_Plus = r'\+'
+	t_Minus = r'\-'
+	t_Times = r'\*'
+	t_Div = r'\/'
+	t_Mod = r'\%'
+
 	lexer = lex.lex()
 	lexer.input(input)
 	while True:
