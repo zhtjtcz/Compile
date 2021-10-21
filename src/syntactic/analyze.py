@@ -64,7 +64,10 @@ def p_MulExp(p):
 	if len(p) == 2:
 		p[0] = p[1]
 	else:
-		p[0] = ' '.join(p[1:])
+		if p[2] != '%':
+			p[0] = ' '.join(p[1:])
+		else:
+			p[0] = 'mod(' + p[1] + ',' + p[3] + ')'
 	
 def p_UnaryExp(p):
 	'''

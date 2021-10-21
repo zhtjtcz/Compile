@@ -39,6 +39,12 @@ def remove(s):
 
 	return out
 
+def mod(a,b):
+	x = a%b
+	if a<0:
+		x -= b
+	return x
+
 def caclulate(exp):
 	exp = exp.replace('/', '//')
 	if '**' in exp:

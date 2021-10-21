@@ -7,9 +7,6 @@ def main():
 	input = inputfile.read() + '\n'
 	try:
 		input = tool.remove(input)
-		input = input.replace('\n', ' ')
-		input = input.replace('\r', ' ')
-		print(input, file = outputFile)
 		lexer = lexical.laxer.getLexer()
 		result = syntactic.analyze.getAnalyzer(input, lexer)
 		s = result[4][1][1]
