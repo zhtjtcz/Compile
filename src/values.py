@@ -1,4 +1,5 @@
 import os
+import sys
 
 if 'USER' in os.environ.keys():
 	LOCAL = (os.environ['USER'] == 'oem')
