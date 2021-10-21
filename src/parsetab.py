@@ -6,7 +6,7 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'LBrace LPar NUMBER RBrace RPar Semicolon\n\ta : a RBrace\n\t\t\t\t| LBrace\n\t'
+_lr_signature = 'ALBrace LPar NUMBER RBrace RPar Semicolon\tA : A RBrace\n\t  \t  | LBrace\n\t'
     
 _lr_action_items = {'LBrace':([0,],[2,]),'$end':([1,2,3,],[0,-2,-1,]),'RBrace':([1,2,3,],[3,-2,-1,]),}
 
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'a':([0,],[1,]),}
+_lr_goto_items = {'A':([0,],[1,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,7 +26,7 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> a","S'",1,None,None,None),
-  ('a -> a RBrace','a',2,'p_a','yacctest.py',6),
-  ('a -> LBrace','a',1,'p_a','yacctest.py',7),
+  ("S' -> A","S'",1,None,None,None),
+  ('A -> A RBrace','A',2,'p_A','yacctest.py',5),
+  ('A -> LBrace','A',1,'p_A','yacctest.py',6),
 ]

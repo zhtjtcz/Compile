@@ -1,21 +1,17 @@
-from test import tokens
+from test import tokens,lexer
 import ply.yacc as yacc
 
-def p_a(p):
+def p_A(p):
+	'''	A : A RBrace
+	  	  | LBrace
 	'''
-	a : a RBrace
-				| LBrace
-	'''
-	if len(p) != 1:
-		p[0] = p[1] + '}'
-	else:
-		p[0] = '{'
+	p[0] = ' '.join(p[1:])
 
 def p_error(p):
     print('!!')
 
-parser = yacc.yacc()
+parser = yacc.yacc(start = 'A')
 
 s = "{}}}}"
-result = parser.parse(s)
+result = parser.parse(s, lexer)
 print(result)
