@@ -30,7 +30,9 @@ def t_error(t):
 	print("Illegal character '%s'" % t.value[0])
 	t.lexer.skip(1)
 
+
 lexer = lex.lex()
+'''
 data = "(0010)"
 
 lexer.input(data)
@@ -40,3 +42,4 @@ while True:
 	tok = lexer.token()
 	if not tok: break	  # No more input
 	print(tok)
+'''
