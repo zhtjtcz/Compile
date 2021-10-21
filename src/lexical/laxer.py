@@ -8,6 +8,12 @@ reserved = {
 	'return': 'Return'
 }
 
+tokens = [
+	'Number', 'LPar', 'RPar',
+	'LBrace', 'RBrace', 'Semicolon', 'ID',
+	'Plus', 'Minus', 'Times', 'Div', 'Mod'
+] + list(reserved.values())
+
 def t_Number(t):
 	r'0[xX][0-9a-fA-F]+|[0-9][0-9]*'
 	if t.value[0] == '0' and len(t.value)>1 and t.value[1] not in ['x', 'X']:
@@ -33,15 +39,7 @@ def t_error(t):
 	print("Illegal character '%s'" % t.value[0])
 	exit(1)
 
-def getTokens(input, outputFile):
-	result = []
-
-	tokens = [
-		'Number', 'LPar', 'RPar',
-		'LBrace', 'RBrace', 'Semicolon', 'ID',
-		'Plus', 'Minus', 'Times', 'Div', 'Mod'
-	] + list(reserved.values())
-
+def getLexer():
 	t_LPar  = r'\('
 	t_RPar  = r'\)'
 	t_LBrace = r'\{'
@@ -55,12 +53,4 @@ def getTokens(input, outputFile):
 	t_Mod = r'\%'
 
 	lexer = lex.lex()
-	lexer.input(input)
-	while True:
-		token = lexer.token()
-		if not token:
-			break	  # No more input
-		if LOCAL:
-			print(token, file=outputFile)
-		result.append(token)
-	return result
+	return lexer

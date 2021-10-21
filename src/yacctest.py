@@ -1,11 +1,14 @@
 from test import tokens,lexer
-import ply.yacc as yacc
+import syntactic.yacc as yacc
 
 def p_A(p):
 	'''	A : A RBrace
 	  	  | LBrace
 	'''
-	p[0] = ' '.join(p[1:])
+	if len(p)>=3:
+		p[0] = [[p[1],p.lineno(1)], [p[2], p.lineno(2)]]
+	else:
+		p[0] = p[1]
 
 def p_error(p):
     print('!!')
