@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CompUnitDiv ID Int LBrace LPar Main Minus Mod Number Plus RBrace RPar Return Semicolon Times\n\tCompUnit : Int\n\t'
+_lr_signature = 'CompUnitDiv ID Int LBrace LPar Main Minus Mod Number Plus RBrace RPar Return Semicolon Times\n\tCompUnit : FuncDef\n\t\n\tFuncDef : FuncType Ident LPar RPar Block\n\t\n\tFuncType : Int\n\t\n\tIdent : Main\n\t\n\tBlock : LBrace Stmt RBrace\n\t\n\tStmt : Return Exp Semicolon\n\t\n\tExp : AddExp\n\t\n\tAddExp : MulExp \n           | AddExp Plus MulExp\n\t\t   | AddExp Minus MulExp\n\t\n\tMulExp : UnaryExp\n           | MulExp Times UnaryExp\n\t\t   | MulExp Div UnaryExp\n\t\t   | MulExp Mod UnaryExp\n\t\n\tUnaryExp : PrimaryExp\n\t\t\t | UnaryOp UnaryExp\n\t\n\tPrimaryExp : LPar Exp RPar\n\t\t\t   | Number\n\t\n\tUnaryOp : Plus\n\t\t\t| Minus\n\t'
     
-_lr_action_items = {'Int':([0,],[2,]),'$end':([1,2,],[0,-1,]),}
+_lr_action_items = {'Int':([0,],[4,]),'$end':([1,2,9,13,],[0,-1,-2,-5,]),'Main':([3,4,],[6,-3,]),'LPar':([5,6,12,17,18,21,22,25,26,27,28,29,],[7,-4,22,-19,-20,22,22,22,22,22,22,22,]),'RPar':([7,15,16,19,20,23,30,31,32,33,34,35,36,37,],[8,-7,-8,-11,-15,-18,-16,37,-9,-10,-12,-13,-14,-17,]),'LBrace':([8,],[10,]),'Return':([10,],[12,]),'RBrace':([11,24,],[13,-6,]),'Number':([12,17,18,21,22,25,26,27,28,29,],[23,-19,-20,23,23,23,23,23,23,23,]),'Plus':([12,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,32,33,34,35,36,37,],[17,25,-8,-19,-20,-11,-15,17,17,-18,17,17,17,17,17,-16,-9,-10,-12,-13,-14,-17,]),'Minus':([12,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,32,33,34,35,36,37,],[18,26,-8,-19,-20,-11,-15,18,18,-18,18,18,18,18,18,-16,-9,-10,-12,-13,-14,-17,]),'Semicolon':([14,15,16,19,20,23,30,32,33,34,35,36,37,],[24,-7,-8,-11,-15,-18,-16,-9,-10,-12,-13,-14,-17,]),'Times':([16,19,20,23,30,32,33,34,35,36,37,],[27,-11,-15,-18,-16,27,27,-12,-13,-14,-17,]),'Div':([16,19,20,23,30,32,33,34,35,36,37,],[28,-11,-15,-18,-16,28,28,-12,-13,-14,-17,]),'Mod':([16,19,20,23,30,32,33,34,35,36,37,],[29,-11,-15,-18,-16,29,29,-12,-13,-14,-17,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'CompUnit':([0,],[1,]),}
+_lr_goto_items = {'CompUnit':([0,],[1,]),'FuncDef':([0,],[2,]),'FuncType':([0,],[3,]),'Ident':([3,],[5,]),'Block':([8,],[9,]),'Stmt':([10,],[11,]),'Exp':([12,22,],[14,31,]),'AddExp':([12,22,],[15,15,]),'MulExp':([12,22,25,26,],[16,16,32,33,]),'UnaryExp':([12,21,22,25,26,27,28,29,],[19,30,19,19,19,34,35,36,]),'PrimaryExp':([12,21,22,25,26,27,28,29,],[20,20,20,20,20,20,20,20,]),'UnaryOp':([12,21,22,25,26,27,28,29,],[21,21,21,21,21,21,21,21,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,5 +27,24 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> CompUnit","S'",1,None,None,None),
-  ('CompUnit -> Int','CompUnit',1,'p_CompUnit','analyze.py',6),
+  ('CompUnit -> FuncDef','CompUnit',1,'p_CompUnit','analyze.py',6),
+  ('FuncDef -> FuncType Ident LPar RPar Block','FuncDef',5,'p_Funcdef','analyze.py',11),
+  ('FuncType -> Int','FuncType',1,'p_FuncType','analyze.py',16),
+  ('Ident -> Main','Ident',1,'p_Ident','analyze.py',21),
+  ('Block -> LBrace Stmt RBrace','Block',3,'p_Block','analyze.py',26),
+  ('Stmt -> Return Exp Semicolon','Stmt',3,'p_Stmt','analyze.py',31),
+  ('Exp -> AddExp','Exp',1,'p_Exp','analyze.py',36),
+  ('AddExp -> MulExp','AddExp',1,'p_Addexp','analyze.py',41),
+  ('AddExp -> AddExp Plus MulExp','AddExp',3,'p_Addexp','analyze.py',42),
+  ('AddExp -> AddExp Minus MulExp','AddExp',3,'p_Addexp','analyze.py',43),
+  ('MulExp -> UnaryExp','MulExp',1,'p_MulExp','analyze.py',48),
+  ('MulExp -> MulExp Times UnaryExp','MulExp',3,'p_MulExp','analyze.py',49),
+  ('MulExp -> MulExp Div UnaryExp','MulExp',3,'p_MulExp','analyze.py',50),
+  ('MulExp -> MulExp Mod UnaryExp','MulExp',3,'p_MulExp','analyze.py',51),
+  ('UnaryExp -> PrimaryExp','UnaryExp',1,'p_UnaryExp','analyze.py',56),
+  ('UnaryExp -> UnaryOp UnaryExp','UnaryExp',2,'p_UnaryExp','analyze.py',57),
+  ('PrimaryExp -> LPar Exp RPar','PrimaryExp',3,'p_PrimaryExp','analyze.py',62),
+  ('PrimaryExp -> Number','PrimaryExp',1,'p_PrimaryExp','analyze.py',63),
+  ('UnaryOp -> Plus','UnaryOp',1,'p_UnaryOp','analyze.py',68),
+  ('UnaryOp -> Minus','UnaryOp',1,'p_UnaryOp','analyze.py',69),
 ]
