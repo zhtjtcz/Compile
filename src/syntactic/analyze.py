@@ -52,7 +52,7 @@ def p_Addexp(p):
 	if len(p) == 2:
 		p[0] = p[1]
 	else:
-		p[0] = [p[1], p[2], p[3]]
+		p[0] = ' '.join(p[1:])
 
 def p_MulExp(p):
 	'''
@@ -64,8 +64,8 @@ def p_MulExp(p):
 	if len(p) == 2:
 		p[0] = p[1]
 	else:
-		p[0] = [p[1], p[2], p[3]]
-
+		p[0] = ' '.join(p[1:])
+	
 def p_UnaryExp(p):
 	'''
 	UnaryExp : PrimaryExp
@@ -74,7 +74,7 @@ def p_UnaryExp(p):
 	if len(p) == 2:
 		p[0] = p[1]
 	else:
-		p[0] = [p[1], p[2]]
+		p[0] = ' '.join(p[1:])
 
 def p_PrimaryExp(p):
 	'''
@@ -82,9 +82,9 @@ def p_PrimaryExp(p):
 			   | Number
 	'''
 	if len(p) == 2:
-		p[0] = p[1]
+		p[0] = str(p[1])
 	else:
-		p[0] = [p[1], p[2], p[3]]
+		p[0] = ' '.join(p[1:])
 
 def p_UnaryOp(p):
 	'''

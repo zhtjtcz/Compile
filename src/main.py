@@ -1,15 +1,19 @@
 from values import *
 import lexical.laxer
-import lexical.tool
+import tool
 import syntactic.analyze
 
 def main():
 	input = inputfile.read() + '\n'
-	input = lexical.tool.remove(input)
-	lexer = lexical.laxer.getLexer()
-	result = syntactic.analyze.getAnalyzer(input, lexer)
-	print(result)
-
+	try:
+		input = tool.remove(input)
+		lexer = lexical.laxer.getLexer()
+		result = syntactic.analyze.getAnalyzer(input, lexer)
+		s = result[4][1][1]
+		s = tool.caclulate(s)
+		print("define dso_local i32 @main(){\n	ret i32 %d \n}"%s, file = outputFile)
+	except:
+		exit(1)
 
 if __name__ == "__main__":
 	main()
