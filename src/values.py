@@ -1,7 +1,10 @@
 import os
 import sys
+import platform
 
-if 'USER' in os.environ.keys():
+if platform.system()=='Windows':
+	LOCAL = True
+elif 'USER' in os.environ.keys():
 	LOCAL = (os.environ['USER'] == 'oem')
 else:
 	LOCAL = False
