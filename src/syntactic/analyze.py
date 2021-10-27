@@ -1,6 +1,8 @@
 from lexical.laxer import tokens
 import syntactic.yacc as yacc
 from syntactic.node import Node
+from values import *
+from syntactic.table import table
 
 def p_CompUnit(p):
 	'''
@@ -65,7 +67,8 @@ def p_MulExp(p):
 		   | MulExp Div UnaryExp
 		   | MulExp Mod UnaryExp
 	'''
-	p[0] = Node('MulExp', children = p[1:])
+	op = Node(p[2])
+	p[0] = Node('MulExp', children = p[1] + op + p[3])
 
 def p_UnaryExp(p):
 	'''
@@ -100,3 +103,62 @@ def getAnalyzer(input, lexer):
 	parser = yacc.yacc(start = 'CompUnit')
 	result = parser.parse(input, lexer)
 	return result
+
+def dfs(x : Node):
+	if x.type == 'CompUnit':
+		dfs(x.children[0])
+	elif x.type == 'FuncDef':
+		print('define dso_local i32 @main()', file = outputFile, end = '')
+		dfs(x.children[-1])
+	elif x.type == 'Block':
+		print('{', file = outputFile)
+		dfs(x.children[1])
+		print('}', file = outputFile)
+	elif x.type == 'Stmt':
+		print('ret i32', file = outputFile, end = ' ')
+		dfs(x.children[1])
+		print(x.children[1].name, file = outputFile)
+	elif x.type == 'Exp':
+		dfs(x.children[0])
+		x.name = x.children[0].name
+	elif x.type == 'AddExp':
+		if len(x.children) == 1:
+			dfs(x.children[0])
+			x.name = x.children[0].name
+		else:
+			dfs(x.children[2])
+			dfs(x.children[0])
+			x.name = table.create_val()
+			if x.children[1].type == 'Plus':
+				print(x.name, '= add', x.children[0].name,  x.children[2].name, file = outputFile)
+			else:
+				print(x.name, '= sub', x.children[0].name,  x.children[2].name, file = outputFile)
+	elif x.type == 'MulExp':
+		if len(x.children) == 1:
+			dfs(x.children[0])
+			x.name = x.children[0].name
+		else:
+			dfs(x.children[2])
+			dfs(x.children[0])
+			x.name = table.create_val()
+			if x.children[1].type == 'Times':
+				print(x.name, '= mul', x.children[0].name,  x.children[2].name, file = outputFile)
+			elif x.children[1].type == 'Div':
+				print(x.name, '= sdiv', x.children[0].name,  x.children[2].name, file = outputFile)
+			else:
+				print(x.name, '= srem', x.children[0].name,  x.children[2].name, file = outputFile)
+	elif x.type == 'UnaryExp':
+		if len(x.children) == 1:
+			x.name = x.children[0].name
+		else:
+			x.name = table.create_val()
+			if x.children[0].type == 'Plus':
+				print(x.name, '= add i32 0', x.children[1].name, file = outputFile)
+			else:
+				print(x.name, '= sub i32 0', x.children[1].name, file = outputFile)
+	elif x.type == 'PrimaryExp':
+		if len(x.children) == 1:
+			x.name = str(x.children[0].value)
+		else:
+			dfs(x.children[1])
+			x.name = x.children[1].name
