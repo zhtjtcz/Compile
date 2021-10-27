@@ -58,7 +58,12 @@ def p_Addexp(p):
            | AddExp Plus MulExp
 		   | AddExp Minus MulExp
 	'''
-	p[0] = Node('AddExp', children = p[1:])
+
+	if len(p) > 2:
+		op = Node(p[2])
+		p[0] = Node('AddExp', children = [p[1], op, p[3]])
+	else:
+		p[0] = Node('AddExp', children =p[1:])
 
 def p_MulExp(p):
 	'''
@@ -67,8 +72,11 @@ def p_MulExp(p):
 		   | MulExp Div UnaryExp
 		   | MulExp Mod UnaryExp
 	'''
-	op = Node(p[2])
-	p[0] = Node('MulExp', children = p[1] + op + p[3])
+	if len(p) > 2:
+		op = Node(p[2])
+		p[0] = Node('MulExp', children = [p[1], op, p[3]])
+	else:
+		p[0] = Node('MulExp', children =p[1:])
 
 def p_UnaryExp(p):
 	'''
@@ -115,8 +123,8 @@ def dfs(x : Node):
 		dfs(x.children[1])
 		print('}', file = outputFile)
 	elif x.type == 'Stmt':
-		print('ret i32', file = outputFile, end = ' ')
 		dfs(x.children[1])
+		print('ret i32', file = outputFile, end = ' ')
 		print(x.children[1].name, file = outputFile)
 	elif x.type == 'Exp':
 		dfs(x.children[0])
@@ -149,6 +157,7 @@ def dfs(x : Node):
 				print(x.name, '= srem', x.children[0].name,  x.children[2].name, file = outputFile)
 	elif x.type == 'UnaryExp':
 		if len(x.children) == 1:
+			dfs(x.children[0])
 			x.name = x.children[0].name
 		else:
 			x.name = table.create_val()
@@ -157,8 +166,11 @@ def dfs(x : Node):
 			else:
 				print(x.name, '= sub i32 0', x.children[1].name, file = outputFile)
 	elif x.type == 'PrimaryExp':
+		dfs(x.children[0])
 		if len(x.children) == 1:
 			x.name = str(x.children[0].value)
 		else:
 			dfs(x.children[1])
 			x.name = x.children[1].name
+	elif x.type == 'Number':
+		x.name = str(x.value)
