@@ -8,7 +8,7 @@ def main():
 	input = tool.remove(input)
 	lexer = lexical.laxer.getLexer()
 	result = syntactic.analyze.getAnalyzer(input, lexer)
-	result.dfs_test()
+	result.dfs_test(result)
 
 if __name__ == "__main__":
 	main()

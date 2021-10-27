@@ -12,31 +12,37 @@ def p_Funcdef(p):
 	'''
 	FuncDef : FuncType Ident LPar RPar Block
 	'''
-	p[0] = Node('FuncDef', children = p[1:])
+	l = Node('LBrace', name = '(')
+	r = Node('RBrace', name = ')')
+	p[0] = Node('FuncDef', children = [p[1], p[2], l, r, p[5]])
 
 def p_FuncType(p):
 	'''
 	FuncType : Int
 	'''
-	p[0] = Node('FuncType', children = p[1:])
+	p[0] = Node('FuncType', name = p[1])
 
 def p_Ident(p):
 	'''
 	Ident : Main
 	'''
-	p[0] = Node('Ident', children = p[1:])
+	p[0] = Node('Ident', name = p[1])
 
 def p_Block(p):
 	'''
 	Block : LBrace Stmt RBrace
 	'''
-	p[0] = Node('Block', children = p[1:])
+	l = Node('LBrace', name = '(')
+	r = Node('RBrace', name = ')')
+	p[0] = Node('Block', children = [l, p[2], r])
 
 def p_Stmt(p):
 	'''
 	Stmt : Return Exp Semicolon
 	'''
-	p[0] = Node('Stmt', children = p[1:])
+	l = Node('Return', name = 'return')
+	r = Node('Semicolon', name = ';')
+	p[0] = Node('Stmt', children = [l, p[2], r])
 
 def p_Exp(p):
 	'''
@@ -73,7 +79,12 @@ def p_PrimaryExp(p):
 	PrimaryExp : LPar Exp RPar
 			   | Number
 	'''
-	p[0] = Node('PrimaryExp', children = p[1:]) 
+	if len(p) == 2:
+		p[0] = Node('Number', value = int(p[1]))
+	else:
+		l = Node('Return', name = 'return')
+		r = Node('Semicolon', name = ';')
+		p[0] = Node('Stmt', children = [l, p[2], r])
 
 def p_UnaryOp(p):
 	'''
