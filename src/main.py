@@ -9,9 +9,7 @@ def main():
 		input = tool.remove(input)
 		lexer = lexical.laxer.getLexer()
 		result = syntactic.analyze.getAnalyzer(input, lexer)
-		s = result[4][1][1]
-		s = tool.caclulate(s)
-		print("define dso_local i32 @main(){\n	ret i32 %d \n}"%s, file = outputFile)
+		result.dfs_test()
 	except:
 		exit(1)
 
