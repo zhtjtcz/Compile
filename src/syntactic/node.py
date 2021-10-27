@@ -1,7 +1,7 @@
 class Node():
-	def __init__(self, type, chidlren = [], name = None, number = 0):
+	def __init__(self, type, children = [], name = None, number = 0):
 		self.type = type
-		self.children = chidlren
+		self.children = children
 		self.name = name
 		self.value = number
 
