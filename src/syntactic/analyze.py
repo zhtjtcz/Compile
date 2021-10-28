@@ -62,9 +62,20 @@ def p_ConstExp(p):
 
 def p_VarDecl(p):
 	'''
-	VarDecl : BType VarDef { ',' VarDef } ';'
+	VarDecl : BType VarDefs Semicolon
 	'''
-	# TODO
+	r = Node('Semicolon')
+	p[0] = Node('ConstDecl', children = [p[1], p[2], r])
+
+def p_Vardefs(p):
+	'''
+	VarDefs : VarDef
+			| VarDefs Comma VarDef
+	'''
+	if len(p) == 2:
+		return Node('VarDefs', children = [p[1]])
+	else:
+		return Node('VarDefs', children = p[1].children + p[3])	
 
 def p_VarDef(p):
 	'''
