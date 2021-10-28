@@ -19,15 +19,28 @@ def p_Decl(p):
 
 def p_ConstDecl(p):
 	'''
-	ConstDecl : Const BType ConstDef { ',' ConstDef } Semicolon
+	ConstDecl : Const BType ConstDefs Semicolon
 	'''
-	# TODO
+	l = Node('Const')
+	r = Node('Semicolon')
+	p[0] = Node('ConstDecl', children = [l, p[2], p[3], r])
+
+def p_ConstDefs(p):
+	'''
+	ConstDefs : ConstDef
+			  | ConstDefs Comma ConstDef
+	'''
+	if len(p) == 2:
+		return Node('ConstDefs', children = [p[1]])
+	else:
+		return Node('ConstDefs', children = p[1].children + p[3])
 
 def p_BType(p):
 	'''
 	BType : Int
 	'''
-	p[0] = Node('BType', name = p[1])
+	p[0] = Node('Int')
+	# Only one type!
 
 def p_ConstDef(p):
 	'''
