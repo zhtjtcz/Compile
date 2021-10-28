@@ -112,12 +112,24 @@ def p_Ident(p):
 
 def p_Block(p):
 	'''
-	Block : LBrace Stmt RBrace
+	Block : LBrace BlockItems RBrace
 	'''
 	l = Node('LBrace', name = '(')
 	r = Node('RBrace', name = ')')
-	p[0] = Node('Block', children = [l, p[2], r])
-	# TODO
+	p[0] = Node('Block', children = [l, p[2].children, r])
+
+def p_BlockItems(p):
+	'''
+	BlockItems : empty
+			   | BlockItems BlockItem
+	'''
+	if len(p) == 1:
+		return None
+	else:
+		if p[1] == None:
+			p[0] = Node('BlockItems', children = p[2])
+		else:
+			p[0] = Node('BlockItems', children = p[1].children + p[2])
 
 def p_BlockItem(p):
 	'''
@@ -205,9 +217,19 @@ def p_UnaryExp(p):
 
 def p_FuncRParams(p):
 	'''
-	Exp { ',' Exp }
+	Exp Exps
 	'''
 	# TODO
+
+def p_Exps(p):
+	'''
+	Exps : Comma Exp
+		 | Exps Comma Exps
+	'''
+	if len(p) == 3:
+		p[0] = Node('Exps', children = p[2])
+	else:
+		p[0] = Node('Exps', children = p[1].children + p[3])
 
 def p_PrimaryExp(p):
 	'''
