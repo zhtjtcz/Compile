@@ -2,7 +2,7 @@ from values import *
 import lexical.laxer
 import tool
 import syntactic.analyze
-from syntactic.analyze import dfs
+from syntactic.ast import dfs
 
 def main():
 	input = inputfile.read() + '\n'

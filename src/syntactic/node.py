@@ -1,8 +1,14 @@
 class Node():
-	def __init__(self, type, children = [], name = '', value = 0):
+	def __init__(self, type, children = [], name = '', value = 0, scope = ''):
 		self.type = type
 		self.children = children
 		self.name = name
+		# If it's not ident, it may store the %x
+		# If it's ident, it store the real name
+		
+		self.add = ''
+		self.scope = scope
+		# TODO using it
 		self.value = value
 
 	def dfs_test(self, x, d, fa):
