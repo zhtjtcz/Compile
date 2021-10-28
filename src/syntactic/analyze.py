@@ -46,7 +46,8 @@ def p_ConstDef(p):
 	'''
 	ConstDef : Ident Equal ConstInitVal
 	'''
-	p[0] = Node('ConstDef', children = p[1:])
+	p[1] = Node('Ident', name = p[1])
+	p[0] = Node('ConstDef', children = [p[1], p[3]])
 
 def p_ConstInitVal(p):
 	'''
@@ -65,7 +66,7 @@ def p_VarDecl(p):
 	VarDecl : BType VarDefs Semicolon
 	'''
 	r = Node('Semicolon')
-	p[0] = Node('ConstDecl', children = [p[1], p[2], r])
+	p[0] = Node('ConstDecl', children = [p[1], p[2].children, r])
 
 def p_Vardefs(p):
 	'''
@@ -73,16 +74,20 @@ def p_Vardefs(p):
 			| VarDefs Comma VarDef
 	'''
 	if len(p) == 2:
-		return Node('VarDefs', children = [p[1]])
+		p[0] = Node('VarDefs', children = [p[1]])
 	else:
-		return Node('VarDefs', children = p[1].children + p[3])	
+		p[0] = Node('VarDefs', children = p[1].children + [p[3]])	
 
 def p_VarDef(p):
 	'''
-	VarDef : Ident
-           | Ident Equal InitVal
+	VarDef : Ident Equal InitVal
+           | Ident
 	'''
-	p[0] = Node('VarDef', children = p[1:])
+	if len(p) == 2:
+		p[0] = Node("Ident", name = p[1])
+	else:
+		x = Node("Ident", name = p[1])
+		p[0] = Node('VarDef', children = [x, p[3]])
 
 def p_InitVal(p):
 	'''
@@ -92,7 +97,7 @@ def p_InitVal(p):
 
 def p_Funcdef(p):
 	'''
-	FuncDef : FuncType Ident LPar RPar Block
+	FuncDef : FuncType Main LPar RPar Block
 	'''
 	l = Node('LBrace', name = '(')
 	r = Node('RBrace', name = ')')
@@ -121,9 +126,9 @@ def p_BlockItems(p):
 		return None
 	else:
 		if p[1] == None:
-			p[0] = Node('BlockItems', children = p[2])
+			p[0] = Node('BlockItems', children = [p[2]])
 		else:
-			p[0] = Node('BlockItems', children = p[1].children + p[2])
+			p[0] = Node('BlockItems', children = p[1].children + [p[2]])
 
 def p_BlockItem(p):
 	'''
@@ -157,7 +162,7 @@ def p_LVal(p):
 	'''
 	LVal : Ident
 	'''
-	p[0] = Node('LVal', children = p[1:])
+	p[0] = Node('LVal', children = [Node("Ident", name = p[1])])
 
 def p_Exp(p):
 	'''
@@ -203,27 +208,29 @@ def p_UnaryExp(p):
 	elif len(p) == 4:
 		l = Node('LBrace', name = '(')
 		r = Node('RBrace', name = ')')
-		p[0] = Node('UnaryExp', children = [p[1], l, r])
+		x = Node('Ident', name = p[1])
+		p[0] = Node('UnaryExp', children = [x, l, r])
 	else:
 		l = Node('LBrace', name = '(')
 		r = Node('RBrace', name = ')')
-		p[0] = Node('UnaryExp', children = [p[1], l, p[3], r])
+		x = Node('Ident', name = p[1])
+		p[0] = Node('UnaryExp', children = [x, l, p[3], r])
 
 def p_FuncRParams(p):
 	'''
-	FuncRParams : Exps
+	FuncRParams : Exp Exps
 	'''
-	p[0] = Node('FuncRParams', children = p[1].children)
+	p[0] = Node('FuncRParams', children = p[1] + p[2].children)
 
 def p_Exps(p):
 	'''
 	Exps : Comma Exp
-		 | Exps Comma Exps
+		 | Comma Exp Exps
 	'''
 	if len(p) == 3:
 		p[0] = Node('Exps', children = p[2])
 	else:
-		p[0] = Node('Exps', children = p[1].children + p[3])
+		p[0] = Node('Exps', children = p[2] + p[3].children)
 
 def p_PrimaryExp(p):
 	'''
@@ -250,6 +257,7 @@ def p_UnaryOp(p):
 	p[0] = Node(p[1])
 
 def p_error(p):
+	print(p)
 	exit(1)
 
 def getAnalyzer(input, lexer):
