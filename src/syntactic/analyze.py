@@ -42,8 +42,8 @@ def p_Stmt(p):
 	'''
 	Stmt : Return Exp Semicolon
 	'''
-	l = Node('Return', name = 'return')
-	r = Node('Semicolon', name = ';')
+	l = Node('Return')
+	r = Node('Semicolon')
 	p[0] = Node('Stmt', children = [l, p[2], r])
 
 def p_Exp(p):
@@ -63,7 +63,7 @@ def p_Addexp(p):
 		op = Node(p[2])
 		p[0] = Node('AddExp', children = [p[1], op, p[3]])
 	else:
-		p[0] = Node('AddExp', children =p[1:])
+		p[0] = Node('AddExp', children = p[1:])
 
 def p_MulExp(p):
 	'''
@@ -93,16 +93,16 @@ def p_PrimaryExp(p):
 	if len(p) == 2:
 		p[0] = Node('Number', value = int(p[1]))
 	else:
-		l = Node('Return', name = 'return')
-		r = Node('Semicolon', name = ';')
-		p[0] = Node('Stmt', children = [l, p[2], r])
+		l = Node('LBrace', name = '(')
+		r = Node('RBrace', name = ')')
+		p[0] = Node('PrimaryExp', children = [l, p[2], r])
 
 def p_UnaryOp(p):
 	'''
 	UnaryOp : Plus
 			| Minus
 	'''
-	p[0] = Node('UnaryOp', name = p[1])
+	p[0] = Node(p[1])
 
 def p_erroe(p):
 	exit(1)
@@ -137,7 +137,7 @@ def dfs(x : Node):
 			dfs(x.children[2])
 			dfs(x.children[0])
 			x.name = table.create_val()
-			if x.children[1].type == 'Plus':
+			if x.children[1].type == '+':
 				print(x.name, '= add', x.children[0].name,  x.children[2].name, file = outputFile)
 			else:
 				print(x.name, '= sub', x.children[0].name,  x.children[2].name, file = outputFile)
@@ -149,9 +149,9 @@ def dfs(x : Node):
 			dfs(x.children[2])
 			dfs(x.children[0])
 			x.name = table.create_val()
-			if x.children[1].type == 'Times':
+			if x.children[1].type == '*':
 				print(x.name, '= mul', x.children[0].name,  x.children[2].name, file = outputFile)
-			elif x.children[1].type == 'Div':
+			elif x.children[1].type == '/':
 				print(x.name, '= sdiv', x.children[0].name,  x.children[2].name, file = outputFile)
 			else:
 				print(x.name, '= srem', x.children[0].name,  x.children[2].name, file = outputFile)
@@ -160,13 +160,13 @@ def dfs(x : Node):
 			dfs(x.children[0])
 			x.name = x.children[0].name
 		else:
+			dfs(x.children[1])
 			x.name = table.create_val()
-			if x.children[0].type == 'Plus':
+			if x.children[0].type == '+':
 				print(x.name, '= add i32 0', x.children[1].name, file = outputFile)
 			else:
 				print(x.name, '= sub i32 0', x.children[1].name, file = outputFile)
 	elif x.type == 'PrimaryExp':
-		dfs(x.children[0])
 		if len(x.children) == 1:
 			x.name = str(x.children[0].value)
 		else:

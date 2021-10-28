@@ -5,10 +5,14 @@ class Node():
 		self.name = name
 		self.value = value
 
-	def dfs_test(self, x):
-		print(x)
+	def dfs_test(self, x, d, fa):
+		print(x.type, d, end = ' ')
+		if fa == None:
+			print('')
+		else:
+			print('father := ', fa.type)
 		for i in x.children:
-			self.dfs_test(i)
+			self.dfs_test(i, d+1, x)
 
 	def __str__(self):
 		return self.type + '    ' + self.name + '    ' + str(self.value)
