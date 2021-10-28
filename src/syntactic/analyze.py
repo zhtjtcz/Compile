@@ -138,9 +138,9 @@ def dfs(x : Node):
 			dfs(x.children[0])
 			x.name = table.create_val()
 			if x.children[1].type == '+':
-				print(x.name, '= add', x.children[0].name,  x.children[2].name, file = outputFile)
+				print(x.name, '= add i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
 			else:
-				print(x.name, '= sub', x.children[0].name,  x.children[2].name, file = outputFile)
+				print(x.name, '= sub i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
 	elif x.type == 'MulExp':
 		if len(x.children) == 1:
 			dfs(x.children[0])
@@ -150,11 +150,11 @@ def dfs(x : Node):
 			dfs(x.children[0])
 			x.name = table.create_val()
 			if x.children[1].type == '*':
-				print(x.name, '= mul', x.children[0].name,  x.children[2].name, file = outputFile)
+				print(x.name, '= mul i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
 			elif x.children[1].type == '/':
-				print(x.name, '= sdiv', x.children[0].name,  x.children[2].name, file = outputFile)
+				print(x.name, '= sdiv i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
 			else:
-				print(x.name, '= srem', x.children[0].name,  x.children[2].name, file = outputFile)
+				print(x.name, '= srem i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
 	elif x.type == 'UnaryExp':
 		if len(x.children) == 1:
 			dfs(x.children[0])
@@ -163,9 +163,9 @@ def dfs(x : Node):
 			dfs(x.children[1])
 			x.name = table.create_val()
 			if x.children[0].type == '+':
-				print(x.name, '= add i32 0', x.children[1].name, file = outputFile)
+				print(x.name, '= add i32 0,', x.children[1].name, file = outputFile)
 			else:
-				print(x.name, '= sub i32 0', x.children[1].name, file = outputFile)
+				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
 	elif x.type == 'PrimaryExp':
 		if len(x.children) == 1:
 			x.name = str(x.children[0].value)
