@@ -6,6 +6,10 @@ class Node():
 		self.value = value
 
 	def dfs_test(self, x, d, fa):
+		try:
+			print(x[0])
+		except:
+			pass
 		print(x.type, d, end = ' ')
 		if fa == None:
 			print('')
