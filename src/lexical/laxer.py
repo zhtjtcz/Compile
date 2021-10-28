@@ -5,13 +5,15 @@ import lexical.lex as lex
 reserved = {
 	'main': 'Main',
 	'int': 'Int',
-	'return': 'Return'
+	'return': 'Return',
+	'const': 'Const',
 }
 
 tokens = [
 	'Number', 'LPar', 'RPar',
 	'LBrace', 'RBrace', 'Semicolon', 'ID',
-	'Plus', 'Minus', 'Times', 'Div', 'Mod'
+	'Plus', 'Minus', 'Times', 'Div', 'Mod',
+	'Comma', 'Equal',
 ] + list(reserved.values())
 
 def t_Number(t):
@@ -45,12 +47,14 @@ def getLexer():
 	t_LBrace = r'\{'
 	t_RBrace = r'\}'
 	t_Semicolon = r'\;'
-	t_ignore  = ' \t'
+	t_ignore = ' \t'
 	t_Plus = r'\+'
 	t_Minus = r'\-'
 	t_Times = r'\*'
 	t_Div = r'\/'
 	t_Mod = r'\%'
+	t_Comma = r'\,'
+	t_Equal = r'\='
 
 	lexer = lex.lex()
 	return lexer

@@ -10,6 +10,62 @@ def p_CompUnit(p):
 	'''
 	p[0] = Node('CompUnit', children = p[1:])
 
+def p_Decl(p):
+	'''
+	Decl : ConstDecl
+		 | VarDecl
+	'''
+	p[0] = Node('Decl', children = p[1:])
+
+def p_ConstDecl(p):
+	'''
+	ConstDecl : Const BType ConstDef { ',' ConstDef } Semicolon
+	'''
+	# TODO
+
+def p_BType(p):
+	'''
+	BType : Int
+	'''
+	p[0] = Node('BType', name = p[1])
+
+def p_ConstDef(p):
+	'''
+	ConstDef : Ident Equal ConstInitVal
+	'''
+	p[0] = Node('ConstDef', children = p[1:])
+
+def p_ConstInitVal(p):
+	'''
+	ConstInitVal : ConstExp
+	'''
+	p[0] = Node('ConstInitVal', children = p[1:])
+
+def p_ConstExp(p):
+	'''
+	ConstExp : AddExp
+	'''
+	p[0] = Node('ConstExp', children = p[1:])
+
+def p_VarDecl(p):
+	'''
+	VarDecl : BType VarDef { ',' VarDef } ';'
+	'''
+	# TODO
+
+def p_VarDef(p):
+	'''
+	VarDef : Ident
+           | Ident Equal InitVal
+	'''
+	p[0] = Node('VarDef', children = p[1:])
+
+def p_InitVal(p):
+	'''
+	InitVal : Exp
+	'''
+	p[0] = Node('InitVal', children = p[1:])
+
 def p_Funcdef(p):
 	'''
 	FuncDef : FuncType Ident LPar RPar Block
@@ -37,14 +93,41 @@ def p_Block(p):
 	l = Node('LBrace', name = '(')
 	r = Node('RBrace', name = ')')
 	p[0] = Node('Block', children = [l, p[2], r])
+	# TODO
+
+def p_BlockItem(p):
+	'''
+	BlockItem : Decl
+			  | Stmt
+	'''
+	p[0] = Node('InitVal', children = p[1:])
 
 def p_Stmt(p):
 	'''
-	Stmt : Return Exp Semicolon
+	Stmt : Semicolon
+		 | Exp Semicolon
+		 | Return Exp Semicolon
+		 | LVal Equal Exp Semicolon
 	'''
-	l = Node('Return')
-	r = Node('Semicolon')
-	p[0] = Node('Stmt', children = [l, p[2], r])
+	if len(p) == 2:
+		p[0] = Node('Semicolon')
+	elif len(p) == 3:
+		r = Node('Semicolon')
+		p[0] = Node('InitVal', children = [p[1], r])
+	elif len(p) == 4:
+		l = Node('Return')
+		r = Node('Semicolon')
+		p[0] = Node('Stmt', children = [l, p[2], r])
+	else:
+		l = Node('Equal')
+		r = Node('Semicolon')
+		p[0] = Node('Stmt', children = [p[1], l, p[3], r])
+
+def p_LVal(p):
+	'''
+	LVal : Ident
+	'''
+	p[0] = Node('LVal', children = p[1:])
 
 def p_Exp(p):
 	'''
@@ -82,16 +165,38 @@ def p_UnaryExp(p):
 	'''
 	UnaryExp : PrimaryExp
 			 | UnaryOp UnaryExp
+			 | Ident Lpar Rpar
+			 | Ident Lpar FuncRParams Rpar
 	'''
-	p[0] = Node('UnaryExp', children = p[1:])
+	if len(p)<=3:
+		p[0] = Node('UnaryExp', children = p[1:])
+	elif len(p) == 4:
+		l = Node('LBrace', name = '(')
+		r = Node('RBrace', name = ')')
+		p[0] = Node('UnaryExp', children = [p[1], l, r])
+	else:
+		l = Node('LBrace', name = '(')
+		r = Node('RBrace', name = ')')
+		p[0] = Node('UnaryExp', children = [p[1], l, p[3], r])
+
+def p_FuncRParams(p):
+	'''
+	Exp { ',' Exp }
+	'''
+	# TODO
 
 def p_PrimaryExp(p):
 	'''
 	PrimaryExp : LPar Exp RPar
 			   | Number
+			   | LVal
 	'''
 	if len(p) == 2:
-		p[0] = Node('Number', value = int(p[1]))
+		if str(p[1]).isdigit():
+			p[0] = Node('Number', value = int(p[1]))
+		else:
+			p[0] = Node('LVal', name = p[1])
+			# TODO id name
 	else:
 		l = Node('LBrace', name = '(')
 		r = Node('RBrace', name = ')')
