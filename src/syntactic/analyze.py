@@ -104,12 +104,6 @@ def p_FuncType(p):
 	'''
 	p[0] = Node('FuncType', name = p[1])
 
-def p_Ident(p):
-	'''
-	Ident : Main
-	'''
-	p[0] = Node('Ident', name = p[1])
-
 def p_Block(p):
 	'''
 	Block : LBrace BlockItems RBrace
@@ -120,7 +114,7 @@ def p_Block(p):
 
 def p_BlockItems(p):
 	'''
-	BlockItems : empty
+	BlockItems :
 			   | BlockItems BlockItem
 	'''
 	if len(p) == 1:
@@ -201,8 +195,8 @@ def p_UnaryExp(p):
 	'''
 	UnaryExp : PrimaryExp
 			 | UnaryOp UnaryExp
-			 | Ident Lpar Rpar
-			 | Ident Lpar FuncRParams Rpar
+			 | Ident LPar RPar
+			 | Ident LPar FuncRParams RPar
 	'''
 	if len(p)<=3:
 		p[0] = Node('UnaryExp', children = p[1:])
@@ -217,9 +211,9 @@ def p_UnaryExp(p):
 
 def p_FuncRParams(p):
 	'''
-	Exp Exps
+	FuncRParams : Exps
 	'''
-	# TODO
+	p[0] = Node('FuncRParams', children = p[1].children)
 
 def p_Exps(p):
 	'''
@@ -255,7 +249,7 @@ def p_UnaryOp(p):
 	'''
 	p[0] = Node(p[1])
 
-def p_erroe(p):
+def p_error(p):
 	exit(1)
 
 def getAnalyzer(input, lexer):

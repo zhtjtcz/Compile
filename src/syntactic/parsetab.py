@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CompUnitDiv ID Int LBrace LPar Main Minus Mod Number Plus RBrace RPar Return Semicolon Times\n\tCompUnit : FuncDef\n\t\n\tFuncDef : FuncType Ident LPar RPar Block\n\t\n\tFuncType : Int\n\t\n\tIdent : Main\n\t\n\tBlock : LBrace Stmt RBrace\n\t\n\tStmt : Return Exp Semicolon\n\t\n\tExp : AddExp\n\t\n\tAddExp : MulExp \n           | AddExp Plus MulExp\n\t\t   | AddExp Minus MulExp\n\t\n\tMulExp : UnaryExp\n           | MulExp Times UnaryExp\n\t\t   | MulExp Div UnaryExp\n\t\t   | MulExp Mod UnaryExp\n\t\n\tUnaryExp : PrimaryExp\n\t\t\t | UnaryOp UnaryExp\n\t\n\tPrimaryExp : LPar Exp RPar\n\t\t\t   | Number\n\t\n\tUnaryOp : Plus\n\t\t\t| Minus\n\t'
+_lr_signature = 'CompUnitComma Const Div Equal Ident Int LBrace LPar Main Minus Mod Number Plus RBrace RPar Return Semicolon Times\n\tCompUnit : FuncDef\n\t\n\tDecl : ConstDecl\n\t\t | VarDecl\n\t\n\tConstDecl : Const BType ConstDefs Semicolon\n\t\n\tConstDefs : ConstDef\n\t\t\t  | ConstDefs Comma ConstDef\n\t\n\tBType : Int\n\t\n\tConstDef : Ident Equal ConstInitVal\n\t\n\tConstInitVal : ConstExp\n\t\n\tConstExp : AddExp\n\t\n\tVarDecl : BType VarDefs Semicolon\n\t\n\tVarDefs : VarDef\n\t\t\t| VarDefs Comma VarDef\n\t\n\tVarDef : Ident\n           | Ident Equal InitVal\n\t\n\tInitVal : Exp\n\t\n\tFuncDef : FuncType Ident LPar RPar Block\n\t\n\tFuncType : Int\n\t\n\tBlock : LBrace BlockItems RBrace\n\t\n\tBlockItems :\n\t\t\t   | BlockItems BlockItem\n\t\n\tBlockItem : Decl\n\t\t\t  | Stmt\n\t\n\tStmt : Semicolon\n\t\t | Exp Semicolon\n\t\t | Return Exp Semicolon\n\t\t | LVal Equal Exp Semicolon\n\t\n\tLVal : Ident\n\t\n\tExp : AddExp\n\t\n\tAddExp : MulExp \n           | AddExp Plus MulExp\n\t\t   | AddExp Minus MulExp\n\t\n\tMulExp : UnaryExp\n           | MulExp Times UnaryExp\n\t\t   | MulExp Div UnaryExp\n\t\t   | MulExp Mod UnaryExp\n\t\n\tUnaryExp : PrimaryExp\n\t\t\t | UnaryOp UnaryExp\n\t\t\t | Ident LPar RPar\n\t\t\t | Ident LPar FuncRParams RPar\n\t\n\tFuncRParams : Exps\n\t\n\tExps : Comma Exp\n\t\t | Exps Comma Exps\n\t\n\tPrimaryExp : LPar Exp RPar\n\t\t\t   | Number\n\t\t\t   | LVal\n\t\n\tUnaryOp : Plus\n\t\t\t| Minus\n\t'
     
-_lr_action_items = {'Int':([0,],[4,]),'$end':([1,2,9,13,],[0,-1,-2,-5,]),'Main':([3,4,],[6,-3,]),'LPar':([5,6,12,17,18,21,22,25,26,27,28,29,],[7,-4,22,-19,-20,22,22,22,22,22,22,22,]),'RPar':([7,15,16,19,20,23,30,31,32,33,34,35,36,37,],[8,-7,-8,-11,-15,-18,-16,37,-9,-10,-12,-13,-14,-17,]),'LBrace':([8,],[10,]),'Return':([10,],[12,]),'RBrace':([11,24,],[13,-6,]),'Number':([12,17,18,21,22,25,26,27,28,29,],[23,-19,-20,23,23,23,23,23,23,23,]),'Plus':([12,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,32,33,34,35,36,37,],[17,25,-8,-19,-20,-11,-15,17,17,-18,17,17,17,17,17,-16,-9,-10,-12,-13,-14,-17,]),'Minus':([12,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,32,33,34,35,36,37,],[18,26,-8,-19,-20,-11,-15,18,18,-18,18,18,18,18,18,-16,-9,-10,-12,-13,-14,-17,]),'Semicolon':([14,15,16,19,20,23,30,32,33,34,35,36,37,],[24,-7,-8,-11,-15,-18,-16,-9,-10,-12,-13,-14,-17,]),'Times':([16,19,20,23,30,32,33,34,35,36,37,],[27,-11,-15,-18,-16,27,27,-12,-13,-14,-17,]),'Div':([16,19,20,23,30,32,33,34,35,36,37,],[28,-11,-15,-18,-16,28,28,-12,-13,-14,-17,]),'Mod':([16,19,20,23,30,32,33,34,35,36,37,],[29,-11,-15,-18,-16,29,29,-12,-13,-14,-17,]),}
+_lr_action_items = {'Int':([0,9,10,12,13,14,15,16,17,21,34,51,56,69,70,],[4,-20,25,-21,-22,-23,-2,-3,-24,25,-25,-26,-11,-27,-4,]),'$end':([1,2,8,11,],[0,-1,-17,-19,]),'Ident':([3,4,9,10,12,13,14,15,16,17,19,22,25,27,28,31,32,34,38,39,43,44,46,47,48,51,56,57,58,64,69,70,71,72,],[5,-18,-20,24,-21,-22,-23,-2,-3,-24,36,42,-7,-47,-48,36,36,-25,36,55,36,36,36,36,36,-26,-11,42,36,36,-27,-4,55,36,]),'LPar':([5,9,10,12,13,14,15,16,17,19,24,27,28,31,32,34,36,38,43,44,46,47,48,51,56,58,64,69,70,72,],[6,-20,32,-21,-22,-23,-2,-3,-24,32,45,-47,-48,32,32,-25,45,32,32,32,32,32,32,-26,-11,32,32,-27,-4,32,]),'RPar':([6,23,26,29,30,33,36,37,45,49,50,59,60,61,62,63,65,66,67,68,76,78,83,],[7,-29,-30,-33,-37,-45,-28,-46,61,-38,68,-31,-32,-39,76,-41,-34,-35,-36,-44,-40,-42,-43,]),'LBrace':([7,],[9,]),'RBrace':([9,10,12,13,14,15,16,17,34,51,56,69,70,],[-20,11,-21,-22,-23,-2,-3,-24,-25,-26,-11,-27,-4,]),'Semicolon':([9,10,12,13,14,15,16,17,18,20,23,24,26,29,30,33,34,35,36,37,40,41,42,49,51,52,53,54,56,59,60,61,65,66,67,68,69,70,73,74,75,76,79,80,81,82,],[-20,17,-21,-22,-23,-2,-3,-24,34,-46,-29,-28,-30,-33,-37,-45,-25,51,-28,-46,56,-12,-14,-38,-26,69,70,-5,-11,-31,-32,-39,-34,-35,-36,-44,-27,-4,-13,-15,-16,-40,-6,-8,-9,-10,]),'Return':([9,10,12,13,14,15,16,17,34,51,56,69,70,],[-20,19,-21,-22,-23,-2,-3,-24,-25,-26,-11,-27,-4,]),'Const':([9,10,12,13,14,15,16,17,34,51,56,69,70,],[-20,21,-21,-22,-23,-2,-3,-24,-25,-26,-11,-27,-4,]),'Number':([9,10,12,13,14,15,16,17,19,27,28,31,32,34,38,43,44,46,47,48,51,56,58,64,69,70,72,],[-20,33,-21,-22,-23,-2,-3,-24,33,-47,-48,33,33,-25,33,33,33,33,33,33,-26,-11,33,33,-27,-4,33,]),'Plus':([9,10,12,13,14,15,16,17,19,20,23,24,26,27,28,29,30,31,32,33,34,36,37,38,43,44,46,47,48,49,51,56,58,59,60,61,64,65,66,67,68,69,70,72,76,82,],[-20,27,-21,-22,-23,-2,-3,-24,27,-46,43,-28,-30,-47,-48,-33,-37,27,27,-45,-25,-28,-46,27,27,27,27,27,27,-38,-26,-11,27,-31,-32,-39,27,-34,-35,-36,-44,-27,-4,27,-40,43,]),'Minus':([9,10,12,13,14,15,16,17,19,20,23,24,26,27,28,29,30,31,32,33,34,36,37,38,43,44,46,47,48,49,51,56,58,59,60,61,64,65,66,67,68,69,70,72,76,82,],[-20,28,-21,-22,-23,-2,-3,-24,28,-46,44,-28,-30,-47,-48,-33,-37,28,28,-45,-25,-28,-46,28,28,28,28,28,28,-38,-26,-11,28,-31,-32,-39,28,-34,-35,-36,-44,-27,-4,28,-40,44,]),'Equal':([20,24,42,55,],[38,-28,58,72,]),'Times':([20,24,26,29,30,33,36,37,49,59,60,61,65,66,67,68,76,],[-46,-28,46,-33,-37,-45,-28,-46,-38,46,46,-39,-34,-35,-36,-44,-40,]),'Div':([20,24,26,29,30,33,36,37,49,59,60,61,65,66,67,68,76,],[-46,-28,47,-33,-37,-45,-28,-46,-38,47,47,-39,-34,-35,-36,-44,-40,]),'Mod':([20,24,26,29,30,33,36,37,49,59,60,61,65,66,67,68,76,],[-46,-28,48,-33,-37,-45,-28,-46,-38,48,48,-39,-34,-35,-36,-44,-40,]),'Comma':([23,26,29,30,33,36,37,40,41,42,45,49,53,54,59,60,61,63,65,66,67,68,73,74,75,76,77,78,79,80,81,82,83,],[-29,-30,-33,-37,-45,-28,-46,57,-12,-14,64,-38,71,-5,-31,-32,-39,77,-34,-35,-36,-44,-13,-15,-16,-40,64,-42,-6,-8,-9,-10,77,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'CompUnit':([0,],[1,]),'FuncDef':([0,],[2,]),'FuncType':([0,],[3,]),'Ident':([3,],[5,]),'Block':([8,],[9,]),'Stmt':([10,],[11,]),'Exp':([12,22,],[14,31,]),'AddExp':([12,22,],[15,15,]),'MulExp':([12,22,25,26,],[16,16,32,33,]),'UnaryExp':([12,21,22,25,26,27,28,29,],[19,30,19,19,19,34,35,36,]),'PrimaryExp':([12,21,22,25,26,27,28,29,],[20,20,20,20,20,20,20,20,]),'UnaryOp':([12,21,22,25,26,27,28,29,],[21,21,21,21,21,21,21,21,]),}
+_lr_goto_items = {'CompUnit':([0,],[1,]),'FuncDef':([0,],[2,]),'FuncType':([0,],[3,]),'Block':([7,],[8,]),'BlockItems':([9,],[10,]),'BlockItem':([10,],[12,]),'Decl':([10,],[13,]),'Stmt':([10,],[14,]),'ConstDecl':([10,],[15,]),'VarDecl':([10,],[16,]),'Exp':([10,19,32,38,58,64,],[18,35,50,52,75,78,]),'LVal':([10,19,31,32,38,43,44,46,47,48,58,64,72,],[20,37,37,37,37,37,37,37,37,37,37,37,37,]),'BType':([10,21,],[22,39,]),'AddExp':([10,19,32,38,58,64,72,],[23,23,23,23,23,23,82,]),'MulExp':([10,19,32,38,43,44,58,64,72,],[26,26,26,26,59,60,26,26,26,]),'UnaryExp':([10,19,31,32,38,43,44,46,47,48,58,64,72,],[29,29,49,29,29,29,29,65,66,67,29,29,29,]),'PrimaryExp':([10,19,31,32,38,43,44,46,47,48,58,64,72,],[30,30,30,30,30,30,30,30,30,30,30,30,30,]),'UnaryOp':([10,19,31,32,38,43,44,46,47,48,58,64,72,],[31,31,31,31,31,31,31,31,31,31,31,31,31,]),'VarDefs':([22,],[40,]),'VarDef':([22,57,],[41,73,]),'ConstDefs':([39,],[53,]),'ConstDef':([39,71,],[54,79,]),'FuncRParams':([45,],[62,]),'Exps':([45,77,],[63,83,]),'InitVal':([58,],[74,]),'ConstInitVal':([72,],[80,]),'ConstExp':([72,],[81,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,24 +27,52 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> CompUnit","S'",1,None,None,None),
-  ('CompUnit -> FuncDef','CompUnit',1,'p_CompUnit','analyze.py',6),
-  ('FuncDef -> FuncType Ident LPar RPar Block','FuncDef',5,'p_Funcdef','analyze.py',11),
-  ('FuncType -> Int','FuncType',1,'p_FuncType','analyze.py',16),
-  ('Ident -> Main','Ident',1,'p_Ident','analyze.py',21),
-  ('Block -> LBrace Stmt RBrace','Block',3,'p_Block','analyze.py',26),
-  ('Stmt -> Return Exp Semicolon','Stmt',3,'p_Stmt','analyze.py',31),
-  ('Exp -> AddExp','Exp',1,'p_Exp','analyze.py',36),
-  ('AddExp -> MulExp','AddExp',1,'p_Addexp','analyze.py',41),
-  ('AddExp -> AddExp Plus MulExp','AddExp',3,'p_Addexp','analyze.py',42),
-  ('AddExp -> AddExp Minus MulExp','AddExp',3,'p_Addexp','analyze.py',43),
-  ('MulExp -> UnaryExp','MulExp',1,'p_MulExp','analyze.py',48),
-  ('MulExp -> MulExp Times UnaryExp','MulExp',3,'p_MulExp','analyze.py',49),
-  ('MulExp -> MulExp Div UnaryExp','MulExp',3,'p_MulExp','analyze.py',50),
-  ('MulExp -> MulExp Mod UnaryExp','MulExp',3,'p_MulExp','analyze.py',51),
-  ('UnaryExp -> PrimaryExp','UnaryExp',1,'p_UnaryExp','analyze.py',56),
-  ('UnaryExp -> UnaryOp UnaryExp','UnaryExp',2,'p_UnaryExp','analyze.py',57),
-  ('PrimaryExp -> LPar Exp RPar','PrimaryExp',3,'p_PrimaryExp','analyze.py',62),
-  ('PrimaryExp -> Number','PrimaryExp',1,'p_PrimaryExp','analyze.py',63),
-  ('UnaryOp -> Plus','UnaryOp',1,'p_UnaryOp','analyze.py',68),
-  ('UnaryOp -> Minus','UnaryOp',1,'p_UnaryOp','analyze.py',69),
+  ('CompUnit -> FuncDef','CompUnit',1,'p_CompUnit','analyze.py',9),
+  ('Decl -> ConstDecl','Decl',1,'p_Decl','analyze.py',15),
+  ('Decl -> VarDecl','Decl',1,'p_Decl','analyze.py',16),
+  ('ConstDecl -> Const BType ConstDefs Semicolon','ConstDecl',4,'p_ConstDecl','analyze.py',22),
+  ('ConstDefs -> ConstDef','ConstDefs',1,'p_ConstDefs','analyze.py',30),
+  ('ConstDefs -> ConstDefs Comma ConstDef','ConstDefs',3,'p_ConstDefs','analyze.py',31),
+  ('BType -> Int','BType',1,'p_BType','analyze.py',40),
+  ('ConstDef -> Ident Equal ConstInitVal','ConstDef',3,'p_ConstDef','analyze.py',47),
+  ('ConstInitVal -> ConstExp','ConstInitVal',1,'p_ConstInitVal','analyze.py',53),
+  ('ConstExp -> AddExp','ConstExp',1,'p_ConstExp','analyze.py',59),
+  ('VarDecl -> BType VarDefs Semicolon','VarDecl',3,'p_VarDecl','analyze.py',65),
+  ('VarDefs -> VarDef','VarDefs',1,'p_Vardefs','analyze.py',72),
+  ('VarDefs -> VarDefs Comma VarDef','VarDefs',3,'p_Vardefs','analyze.py',73),
+  ('VarDef -> Ident','VarDef',1,'p_VarDef','analyze.py',82),
+  ('VarDef -> Ident Equal InitVal','VarDef',3,'p_VarDef','analyze.py',83),
+  ('InitVal -> Exp','InitVal',1,'p_InitVal','analyze.py',89),
+  ('FuncDef -> FuncType Ident LPar RPar Block','FuncDef',5,'p_Funcdef','analyze.py',95),
+  ('FuncType -> Int','FuncType',1,'p_FuncType','analyze.py',103),
+  ('Block -> LBrace BlockItems RBrace','Block',3,'p_Block','analyze.py',109),
+  ('BlockItems -> <empty>','BlockItems',0,'p_BlockItems','analyze.py',117),
+  ('BlockItems -> BlockItems BlockItem','BlockItems',2,'p_BlockItems','analyze.py',118),
+  ('BlockItem -> Decl','BlockItem',1,'p_BlockItem','analyze.py',130),
+  ('BlockItem -> Stmt','BlockItem',1,'p_BlockItem','analyze.py',131),
+  ('Stmt -> Semicolon','Stmt',1,'p_Stmt','analyze.py',137),
+  ('Stmt -> Exp Semicolon','Stmt',2,'p_Stmt','analyze.py',138),
+  ('Stmt -> Return Exp Semicolon','Stmt',3,'p_Stmt','analyze.py',139),
+  ('Stmt -> LVal Equal Exp Semicolon','Stmt',4,'p_Stmt','analyze.py',140),
+  ('LVal -> Ident','LVal',1,'p_LVal','analyze.py',158),
+  ('Exp -> AddExp','Exp',1,'p_Exp','analyze.py',164),
+  ('AddExp -> MulExp','AddExp',1,'p_Addexp','analyze.py',170),
+  ('AddExp -> AddExp Plus MulExp','AddExp',3,'p_Addexp','analyze.py',171),
+  ('AddExp -> AddExp Minus MulExp','AddExp',3,'p_Addexp','analyze.py',172),
+  ('MulExp -> UnaryExp','MulExp',1,'p_MulExp','analyze.py',183),
+  ('MulExp -> MulExp Times UnaryExp','MulExp',3,'p_MulExp','analyze.py',184),
+  ('MulExp -> MulExp Div UnaryExp','MulExp',3,'p_MulExp','analyze.py',185),
+  ('MulExp -> MulExp Mod UnaryExp','MulExp',3,'p_MulExp','analyze.py',186),
+  ('UnaryExp -> PrimaryExp','UnaryExp',1,'p_UnaryExp','analyze.py',196),
+  ('UnaryExp -> UnaryOp UnaryExp','UnaryExp',2,'p_UnaryExp','analyze.py',197),
+  ('UnaryExp -> Ident LPar RPar','UnaryExp',3,'p_UnaryExp','analyze.py',198),
+  ('UnaryExp -> Ident LPar FuncRParams RPar','UnaryExp',4,'p_UnaryExp','analyze.py',199),
+  ('FuncRParams -> Exps','FuncRParams',1,'p_FuncRParams','analyze.py',214),
+  ('Exps -> Comma Exp','Exps',2,'p_Exps','analyze.py',220),
+  ('Exps -> Exps Comma Exps','Exps',3,'p_Exps','analyze.py',221),
+  ('PrimaryExp -> LPar Exp RPar','PrimaryExp',3,'p_PrimaryExp','analyze.py',230),
+  ('PrimaryExp -> Number','PrimaryExp',1,'p_PrimaryExp','analyze.py',231),
+  ('PrimaryExp -> LVal','PrimaryExp',1,'p_PrimaryExp','analyze.py',232),
+  ('UnaryOp -> Plus','UnaryOp',1,'p_UnaryOp','analyze.py',247),
+  ('UnaryOp -> Minus','UnaryOp',1,'p_UnaryOp','analyze.py',248),
 ]

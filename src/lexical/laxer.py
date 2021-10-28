@@ -11,7 +11,7 @@ reserved = {
 
 tokens = [
 	'Number', 'LPar', 'RPar',
-	'LBrace', 'RBrace', 'Semicolon', 'ID',
+	'LBrace', 'RBrace', 'Semicolon', 'Ident',
 	'Plus', 'Minus', 'Times', 'Div', 'Mod',
 	'Comma', 'Equal',
 ] + list(reserved.values())
@@ -26,9 +26,9 @@ def t_Number(t):
 		exit(1)
 	return t
 
-def t_ID(t):
+def t_Ident(t):
 	r'[a-zA-Z_][a-zA-Z_0-9]*'
-	t.type = reserved.get(t.value,'ID')	# Check for reserved words
+	t.type = reserved.get(t.value,'Ident')	# Check for reserved words
 	return t
 
 def t_newline(t):
