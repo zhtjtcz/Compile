@@ -7,6 +7,7 @@ from syntactic.ast import dfs
 def main():
 	input = inputfile.read() + '\n'
 	input = tool.remove(input)
+	print(input)
 	lexer = lexical.laxer.getLexer()
 	result = syntactic.analyze.getAnalyzer(input, lexer)
 	# result.dfs_test(result, 0, None)
