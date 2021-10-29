@@ -4,6 +4,7 @@ class Table():
 	def __init__(self):
 		self.table = {}
 		self.reg = {}
+		self.const = {}
 		self.id = 1
 
 	def create_val(self, name = None):
@@ -44,5 +45,10 @@ class Table():
 			exit(1)
 		else:
 			return self.reg[name]
+
+	def insert_const(self, name = None):
+		if name == None or name in self.const.keys():
+			exit(1)
+		self.const[name] = True
 
 table = Table()

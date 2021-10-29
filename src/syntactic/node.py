@@ -10,7 +10,6 @@ class Node():
 		self.scope = scope
 		# TODO using it
 		self.value = value
-		self.const = False
 
 	def dfs_test(self, x, d, fa):
 		try:
@@ -24,9 +23,6 @@ class Node():
 			print('father -> ', fa.type)
 		for i in x.children:
 			self.dfs_test(i, d+1, x)
-
-	def set_const(self):
-		self.const = True
 	
 	def __str__(self):
 		return self.type + '    ' + self.name + '    ' + str(self.value)

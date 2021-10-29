@@ -20,9 +20,7 @@ def p_ConstDecl(p):
 	'''
 	ConstDecl : Const BType ConstDefs Semicolon
 	'''
-	l = Node('Const')
-	r = Node('Semicolon')
-	p[0] = Node('ConstDecl', children = [l, p[2], p[3], r])
+	p[0] = Node('ConstDecl', children = p[3].children)
 
 def p_ConstDefs(p):
 	'''
@@ -30,9 +28,9 @@ def p_ConstDefs(p):
 			  | ConstDefs Comma ConstDef
 	'''
 	if len(p) == 2:
-		return Node('ConstDefs', children = [p[1]])
+		p[0] = Node('ConstDefs', children = [p[1]])
 	else:
-		return Node('ConstDefs', children = p[1].children + p[3])
+		p[0] = Node('ConstDefs', children = p[1].children + [p[3]])
 
 def p_BType(p):
 	'''
@@ -121,7 +119,7 @@ def p_BlockItems(p):
 			   | BlockItems BlockItem
 	'''
 	if len(p) == 1:
-		return None
+		p[0] = None
 	else:
 		if p[1] == None:
 			p[0] = Node('BlockItems', children = [p[2]])

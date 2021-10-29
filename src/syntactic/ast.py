@@ -57,6 +57,16 @@ def exp(x : Node):
 			exp(x.children[1])
 			x.name = x.children[1].name
 
+def check_can_cal(x : Node):
+	if x == None:
+		return
+	if x.type == 'PrimaryExp' and x.children[0].type == 'LVal':
+		if x.children[0].name not in table.const.keys():
+			exit(1)
+		# Calculate the value using no const val
+	for i in x.children:
+		check_can_cal(i)
+
 def vardef(x : Node):
 	val = x.children[0]
 	if len(x.children) == 1:
@@ -65,8 +75,25 @@ def vardef(x : Node):
 		val.add = table.create_val(val.name)
 		exp(x.children[1].children[0])
 		s = x.children[1].children[0]
+		# s -> Exp
 		print('store i32', s.name, ', i32*', val.add, file = outputFile)
 		table.create_reg(val.name)
+		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
+		# Load it when create it
+
+def constdef(x : Node):
+	val = x.children[0]
+	if len(x.children) == 1:
+		val.add = table.create_val(val.name)
+	else:
+		val.add = table.create_val(val.name)
+		check_can_cal(x.children[1].children[0])
+		exp(x.children[1].children[0].children[0])
+		s = x.children[1].children[0].children[0]
+		# s -> Addexp
+		print('store i32', s.name, ', i32*', val.add, file = outputFile)
+		table.create_reg(val.name)
+		table.insert_const(val.name)
 		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
 		# Load it when create it
 
@@ -75,7 +102,8 @@ def vardecl(x : Node):
 		vardef(i)
 
 def constdecl(x : Node):
-	pass
+	for i in x.children:
+		constdef(i)
 
 def decl(x : Node):
 	if x.children[0].type == 'ConstDecl':
