@@ -144,7 +144,7 @@ def stmt(x : Node):
 
 	if len(x.children) == 3:
 		val = x.children[0]
-		if val.name in table.const.keys() == True:
+		if val.name in table.const.keys():
 			exit(1)
 		exp(x.children[2])
 		print('store i32', x.children[2].name, ', i32*', table.table[val.name], file = outputFile)
