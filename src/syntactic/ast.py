@@ -43,9 +43,20 @@ def exp(x : Node):
 				print(x.name, '= add i32 0,', x.children[1].name, file = outputFile)
 			else:
 				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
-		else:
-			pass
-			# TODO fuction call 
+		elif len(x.children) == 3:
+			x.name = table.create_val()
+			if x.children[0].name == 'getint':
+				print('%s = call i32 @getint()'%(x.name), file = outputFile)
+			elif x.children[0].name == 'getch':
+				print('%s = call i32 @getch()'%(x.name), file = outputFile)
+			# Ident LPar RPar
+		elif len(x.children) == 4:
+			exp(x.children[2])
+			if x.children[0].name == 'putint':
+				print('call void @putint(i32 %s)'%(x.children[2].children[0].name), file = outputFile)
+			elif x.children[0].name == 'putch':
+				print('call void @putch(i32 %s)'%(x.children[2].children[0].name), file = outputFile)
+			# Ident LPar FuncRParams RPar
 	elif x.type == 'PrimaryExp':
 		if len(x.children) == 1:
 			if x.children[0].type == 'Number':
@@ -56,6 +67,9 @@ def exp(x : Node):
 		else:
 			exp(x.children[1])
 			x.name = x.children[1].name
+	elif x.type == 'FuncRParams':
+		for i in x.children:
+			exp(i)
 
 def check_can_cal(x : Node):
 	if x == None:
@@ -117,13 +131,15 @@ def stmt(x : Node):
 	# ;
 
 	if len(x.children) == 1:
+		exp(x.children[0])
 		return
-	# exp; // ignore
+	# exp;
 
 	if len(x.children) == 2:
 		exp(x.children[1])
 		print('ret i32', file = outputFile, end = ' ')
 		print(x.children[1].name, file = outputFile)
+		return
 	# return exp;
 
 	if len(x.children) == 3:
