@@ -60,8 +60,31 @@ def exp(x : Node):
 		x.name = str(x.value)
 		# TODO delete ???
 
-def decl(x : Node):
+def vardef(x : Node):
+	val = x.children[0]
+	if len(x.children) == 1:
+		val.add = table.create_val(val.name)
+	else:
+		val.add = table.create_val(val.name)
+		exp(x.children[1].children[0])
+		s = x.children[1].children[0]
+		print('store i32', s.name, ', i32*', val.add, file = outputFile)
+		table.create_reg(val.name)
+		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add))
+		# Load it when create it
+
+def vardecl(x : Node):
+	for i in x.children:
+		vardef(i)
+
+def constdecl(x : Node):
 	pass
+
+def decl(x : Node):
+	if x.children[0].type == 'ConstDecl':
+		constdecl(x.children[0])
+	else:
+		vardecl(x.children[0])
 
 def stmt(x : Node):
 	if len(x.children) == 0:

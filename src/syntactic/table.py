@@ -17,6 +17,7 @@ class Table():
 				exit(1)
 			else:
 				s = '%' + str(self.id)
+				self.table[name] = s
 				self.id += 1
 				return s
 				# Ident

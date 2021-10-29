@@ -64,7 +64,7 @@ def p_VarDecl(p):
 	'''
 	VarDecl : BType VarDefs Semicolon
 	'''
-	p[0] = Node('ConstDecl', children = [p[1]] + p[2].children)
+	p[0] = Node('ConstDecl', children = p[2].children)
 
 def p_Vardefs(p):
 	'''
