@@ -3,6 +3,7 @@ from values import *
 class Table():
 	def __init__(self):
 		self.table = {}
+		self.reg = {}
 		self.id = 1
 
 	def create_val(self, name = None):
@@ -28,5 +29,18 @@ class Table():
 				exit(1)
 			else:
 				return self.table[name]
+
+	def create_reg(self, name = None):
+		if name == None or name not in self.table.keys():
+			exit(1)
+		else:
+			self.reg[name] = '%' + str(self.id)
+			self.id += 1
+
+	def get_reg(self, name = None):
+		if name == None or name not in self.table.keys():
+			exit(1)
+		else:
+			return self.reg[name]
 
 table = Table()

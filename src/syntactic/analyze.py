@@ -142,9 +142,9 @@ def p_Stmt(p):
 		 | LVal Equal Exp Semicolon
 	'''
 	if len(p) == 2:
-		p[0] = Node('Semicolon')
+		p[0] = Node('Stmt')
 	elif len(p) == 3:
-		p[0] = Node('InitVal', children = [p[1]])
+		p[0] = Node('Stmt', children = [p[1]])
 	elif len(p) == 4:
 		l = Node('Return')
 		p[0] = Node('Stmt', children = [l, p[2]])
@@ -201,10 +201,10 @@ def p_UnaryExp(p):
 		p[0] = Node('UnaryExp', children = p[1:])
 	elif len(p) == 4:
 		x = Node('Ident', name = p[1])
-		p[0] = Node('UnaryExp', children = [x])
+		p[0] = Node('UnaryExp', children = [x, Node('('), Node(')')])
 	else:
 		x = Node('Ident', name = p[1])
-		p[0] = Node('UnaryExp', children = [x, p[3]])
+		p[0] = Node('UnaryExp', children = [x, Node('('), p[3], Node(')')])
 
 def p_FuncRParams(p):
 	'''
@@ -238,9 +238,7 @@ def p_PrimaryExp(p):
 		else:
 			p[0] = Node('LVal', name = p[1].name)
 	else:
-		l = Node('LBrace', name = '(')
-		r = Node('RBrace', name = ')')
-		p[0] = Node('PrimaryExp', children = [l, p[2], r])
+		p[0] = Node('PrimaryExp', children = [Node('('), p[2], Node(')')])
 
 def p_UnaryOp(p):
 	'''
