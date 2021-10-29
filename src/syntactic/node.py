@@ -26,5 +26,3 @@ class Node():
 	
 	def __str__(self):
 		return self.type + '    ' + self.name + '    ' + str(self.value)
-
-# TODO more class extend from node?
