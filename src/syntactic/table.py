@@ -19,6 +19,7 @@ class Table():
 				s = '%' + str(self.id)
 				self.table[name] = s
 				self.id += 1
+				print(s, '= alloca i32', file = outputFile)
 				return s
 				# Ident
 	

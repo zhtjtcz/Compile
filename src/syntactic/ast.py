@@ -48,7 +48,7 @@ def exp(x : Node):
 			# TODO fuction call 
 	elif x.type == 'PrimaryExp':
 		if len(x.children) == 1:
-			if x.children[0] == 'Number':
+			if x.children[0].type == 'Number':
 				x.name = str(x.children[0].value)
 			else:
 				x.name = table.get_reg(x.children[0].name)
@@ -56,9 +56,6 @@ def exp(x : Node):
 		else:
 			exp(x.children[1])
 			x.name = x.children[1].name
-	elif x.type == 'Number':
-		x.name = str(x.value)
-		# TODO delete ???
 
 def vardef(x : Node):
 	val = x.children[0]
@@ -70,7 +67,7 @@ def vardef(x : Node):
 		s = x.children[1].children[0]
 		print('store i32', s.name, ', i32*', val.add, file = outputFile)
 		table.create_reg(val.name)
-		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add))
+		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
 		# Load it when create it
 
 def vardecl(x : Node):
@@ -92,7 +89,7 @@ def stmt(x : Node):
 	# ;
 
 	if len(x.children) == 1:
-		pass
+		return
 	# exp; // ignore
 
 	if len(x.children) == 2:
@@ -102,72 +99,22 @@ def stmt(x : Node):
 	# return exp;
 
 	if len(x.children) == 3:
-		val = x.children[1]
+		val = x.children[0]
 		if val.const == True:
 			exit(1)
-		exp(x.children[3])
+		exp(x.children[2])
 		print('store i32', x.children[3].name, ', i32*', val.add, file = outputFile)
 		table.create_reg(val.name)
-		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add))
+		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
 	# LVal Equal Exp Semicolon
 
 def block(x : Node):
 	for i in x.children:
+		print(i.type)
 		if i.type == 'Decl':
 			decl(i)
 		else:
 			stmt(i)
-	
-	return
-	if x.type == 'Exp':
-		dfs(x.children[0])
-		x.name = x.children[0].name
-	elif x.type == 'AddExp':
-		if len(x.children) == 1:
-			dfs(x.children[0])
-			x.name = x.children[0].name
-		else:
-			dfs(x.children[2])
-			dfs(x.children[0])
-			x.name = table.create_val()
-			if x.children[1].type == '+':
-				print(x.name, '= add i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
-			else:
-				print(x.name, '= sub i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
-	elif x.type == 'MulExp':
-		if len(x.children) == 1:
-			dfs(x.children[0])
-			x.name = x.children[0].name
-		else:
-			dfs(x.children[2])
-			dfs(x.children[0])
-			x.name = table.create_val()
-			if x.children[1].type == '*':
-				print(x.name, '= mul i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
-			elif x.children[1].type == '/':
-				print(x.name, '= sdiv i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
-			else:
-				print(x.name, '= srem i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
-	elif x.type == 'UnaryExp':
-		if len(x.children) == 1:
-			dfs(x.children[0])
-			x.name = x.children[0].name
-		else:
-			dfs(x.children[1])
-			x.name = table.create_val()
-			if x.children[0].type == '+':
-				print(x.name, '= add i32 0,', x.children[1].name, file = outputFile)
-			else:
-				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
-	elif x.type == 'PrimaryExp':
-		if len(x.children) == 1:
-			x.name = str(x.children[0].value)
-		else:
-			dfs(x.children[1])
-			x.name = x.children[1].name
-	elif x.type == 'Number':
-		x.name = str(x.value)
-
 
 def dfs(x : Node):
 	if x.type == 'CompUnit':
@@ -178,5 +125,5 @@ def dfs(x : Node):
 		# TODO check the ident -> lab x
 	elif x.type == 'Block':
 		print('{', file = outputFile)
-		block(x.children[1])
+		block(x.children[0])
 		print('}', file = outputFile)

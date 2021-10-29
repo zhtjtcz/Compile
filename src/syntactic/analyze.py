@@ -64,7 +64,7 @@ def p_VarDecl(p):
 	'''
 	VarDecl : BType VarDefs Semicolon
 	'''
-	p[0] = Node('ConstDecl', children = p[2].children)
+	p[0] = Node('VarDecl', children = p[2].children)
 
 def p_Vardefs(p):
 	'''
@@ -82,7 +82,8 @@ def p_VarDef(p):
            | Ident
 	'''
 	if len(p) == 2:
-		p[0] = Node("Ident", name = p[1])
+		x = Node("Ident", name = p[1])
+		p[0] = Node("VarDef", children = [x])
 	else:
 		x = Node("Ident", name = p[1])
 		p[0] = Node('VarDef', children = [x, p[3]])
@@ -112,7 +113,7 @@ def p_Block(p):
 	'''
 	Block : LBrace BlockItems RBrace
 	'''
-	p[0] = Node('Block', children = p[2].children)
+	p[0] = Node('Block', children = [p[2]])
 
 def p_BlockItems(p):
 	'''
@@ -132,7 +133,8 @@ def p_BlockItem(p):
 	BlockItem : Decl
 			  | Stmt
 	'''
-	p[0] = Node('InitVal', children = p[1:])
+	p[0] = p[1]
+	# p[0] = Node('BlockItem', children = p[1:])
 
 def p_Stmt(p):
 	'''
@@ -234,9 +236,11 @@ def p_PrimaryExp(p):
 	'''
 	if len(p) == 2:
 		if str(p[1]).isdigit():
-			p[0] = Node('Number', value = int(p[1]))
+			x = Node('Number', value = int(p[1]))
+			p[0] = Node('PrimaryExp', children = [x])
 		else:
-			p[0] = Node('LVal', name = p[1].name)
+			x = Node('LVal', name = p[1].name)
+			p[0] = Node('PrimaryExp', children = [x])
 	else:
 		p[0] = Node('PrimaryExp', children = [Node('('), p[2], Node(')')])
 
