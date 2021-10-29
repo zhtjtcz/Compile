@@ -147,7 +147,7 @@ def stmt(x : Node):
 		if val.name in table.const.keys() == True:
 			exit(1)
 		exp(x.children[2])
-		print('store i32', x.children[3].name, ', i32*', val.add, file = outputFile)
+		print('store i32', x.children[2].name, ', i32*', val.add, file = outputFile)
 		table.create_reg(val.name)
 		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
 	# LVal Equal Exp Semicolon
