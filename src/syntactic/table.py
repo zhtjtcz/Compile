@@ -9,7 +9,7 @@ class Table():
 
 	def create_val(self, name = None):
 		if name == None:
-			s = '%' + str(self.id)
+			s = '%x' + str(self.id)
 			self.id += 1
 			return s
 			# Simply exp or caclulation result
@@ -17,7 +17,7 @@ class Table():
 			if name in self.table.keys():
 				exit(1)
 			else:
-				s = '%' + str(self.id)
+				s = '%x' + str(self.id)
 				self.table[name] = s
 				self.id += 1
 				print(s, '= alloca i32', file = outputFile)
@@ -37,7 +37,7 @@ class Table():
 		if name == None or name not in self.table.keys():
 			exit(1)
 		else:
-			self.reg[name] = '%' + str(self.id)
+			self.reg[name] = '%x' + str(self.id)
 			self.id += 1
 
 	def get_reg(self, name = None):
