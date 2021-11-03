@@ -8,7 +8,6 @@ reserved = {
 	'return': 'Return',
 	'const': 'Const',
 	'if': 'If',
-	'then': 'Then',
 	'else': 'Else',
 }
 
@@ -17,7 +16,7 @@ tokens = [
 	'LBrace', 'RBrace', 'Semicolon', 'Ident',
 	'Plus', 'Minus', 'Times', 'Div', 'Mod',
 	'Comma', 'Equal',
-	'Not', 'Less', 'More', 'Leq', 'Geq', 'Deq', 'Neq', 'Ans', 'Or',
+	'Not', 'Less', 'More', 'Leq', 'Geq', 'Deq', 'Neq', 'And', 'Or',
 ] + list(reserved.values())
 
 def t_Number(t):
@@ -64,7 +63,7 @@ def getLexer():
 	t_Geq = r'\>='
 	t_Deq = r'\=='
 	t_Neq = r'\!='
-	t_And = r'\&&'
+	t_And = r'\&\&'
 	t_Or = r'\|\|'
 
 	lexer = lex.lex()

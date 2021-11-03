@@ -137,14 +137,17 @@ def p_BlockItem(p):
 def p_Stmt(p):
 	'''
 	Stmt : Semicolon
+		 | Block
 		 | Exp Semicolon
 		 | Return Exp Semicolon
 		 | LVal Equal Exp Semicolon
-		 | If Lpar Cond Rpar Stmt Else Stmt
-		 | If Lpar Cond Rpar Stmt
+		 | If LPar Cond RPar Stmt Else Stmt
+		 | If LPar Cond RPar Stmt
 	'''
 	if len(p) == 2:
 		p[0] = Node('Stmt')
+		if p[1].name == 'Block':
+			p[0].children = p[1:]
 	elif len(p) == 3:
 		p[0] = Node('Stmt', children = [p[1]])
 	elif len(p) == 4:
