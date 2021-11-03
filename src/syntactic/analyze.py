@@ -140,6 +140,8 @@ def p_Stmt(p):
 		 | Exp Semicolon
 		 | Return Exp Semicolon
 		 | LVal Equal Exp Semicolon
+		 | If Lpar Cond Rpar Stmt Else Stmt
+		 | If Lpar Cond Rpar Stmt
 	'''
 	if len(p) == 2:
 		p[0] = Node('Stmt')
@@ -246,8 +248,42 @@ def p_UnaryOp(p):
 	'''
 	UnaryOp : Plus
 			| Minus
+			| Not
 	'''
 	p[0] = Node(p[1])
+
+def p_Cond(p):
+	'''
+	Cond : LOrExp
+	'''
+
+def p_LOrExp(p):
+	'''
+	LOrExp : LAndExp
+           | LOrExp Or LAndExp
+	'''
+
+def p_LAndExp(p):
+	'''
+	LAndExp : EqExp
+            | LAndExp And EqExp
+	'''
+
+def p_EqExp(p):
+	'''
+	EqExp : RelExp
+    	  | EqExp Deq | '!=') RelExp
+		  | EqExp Neq RelExp
+	'''
+
+def p_RelExp(p):
+	'''
+	RelExp : AddExp
+    	   | RelExp Less AddExp
+		   | RelExp More AddExp
+		   | RelExp Leq AddExp
+		   | RelExp Geq AddExp
+	'''
 
 def p_error(p):
 	print(p)
