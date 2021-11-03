@@ -150,9 +150,13 @@ def p_Stmt(p):
 	elif len(p) == 4:
 		l = Node('Return')
 		p[0] = Node('Stmt', children = [l, p[2]])
-	else:
+	elif len(p) == 5:
 		l = Node('Equal')
 		p[0] = Node('Stmt', children = [p[1], l, p[3]])
+	elif len(p)==6:
+		p[0] = Node('Stmt', children = [p[3], p[5]])
+	else:
+		p[0] = Node('Stmt', children = [p[3], p[5], p[7]])
 
 def p_LVal(p):
 	'''
@@ -256,25 +260,39 @@ def p_Cond(p):
 	'''
 	Cond : LOrExp
 	'''
+	p[0] = Node('Cond', children = [p[1]])
 
 def p_LOrExp(p):
 	'''
 	LOrExp : LAndExp
            | LOrExp Or LAndExp
 	'''
+	if len(p) == 2:
+		p[0] = Node('LOrExp', children = [p[1]])
+	else:
+		p[0] = Node('LOrExp', children = [p[1], p[3]])
 
 def p_LAndExp(p):
 	'''
 	LAndExp : EqExp
             | LAndExp And EqExp
 	'''
+	if len(p) == 2:
+		p[0] = Node('LAndExp', children = [p[1]])
+	else:
+		p[0] = Node('LAndExp', children = [p[1], p[3]])
 
 def p_EqExp(p):
 	'''
 	EqExp : RelExp
-    	  | EqExp Deq | '!=') RelExp
+    	  | EqExp Deq RelExp
 		  | EqExp Neq RelExp
 	'''
+	if len(p) == 2:
+		p[0] = Node('EqExp', children = p[1:])
+	else:
+		op = Node(p[2])
+		p[0] = Node('EqExp', children = [p[1], op, p[3]])
 
 def p_RelExp(p):
 	'''
@@ -284,6 +302,11 @@ def p_RelExp(p):
 		   | RelExp Leq AddExp
 		   | RelExp Geq AddExp
 	'''
+	if len(p) == 2:
+		p[0] = Node('RelExp', children = [p[1]])
+	else:
+		op = Node(p[2])
+		p[0] = Node('RelExp', children = [p[1], op, p[3]])
 
 def p_error(p):
 	print(p)
