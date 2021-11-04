@@ -136,6 +136,56 @@ def decl(x : Node):
 	else:
 		vardecl(x.children[0])
 
+def LogicExp(x : Node):
+	if x.type == 'LOrExp':
+		if len(x.children) == 1:
+			LogicExp(x.children[0])
+			x.name = x.children[0].name
+		else:
+			LogicExp(x.children[0])
+			LogicExp(x.children[1])
+			total = table.create_val()
+			x.name = table.create_val()
+			print("%s = or i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
+			print("%s = icmp sge i1 %s, 0"%(x.name, total), file = outputFile)
+	elif x.type == 'LAndExp':
+		if len(x.children) == 1:
+			LogicExp(x.children[0])
+			x.name = x.children[0].name
+		else:
+			LogicExp(x.children[0])
+			LogicExp(x.children[1])
+			total = table.create_val()
+			x.name = table.create_val()
+			print("%s = and i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
+			print("%s = icmp eq i1 %s, 1"%(x.name, total), file = outputFile)
+	elif x.type == 'EqExp':
+		if len(x.type == 'RelExp'):
+			LogicExp(x.children[0])
+			x.name = x.children[0].name
+		else:
+			x.name = table.create_val()
+			LogicExp(x.children[0])
+			LogicExp(x.children[2])
+			if x.children[1].type == 'Deq':
+				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+			else:
+				print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+	elif x.type == 'RelExp':
+		if len(x.children) == 1:
+			exp(x.children[0])
+			x.name = x.children[0].name
+		else:
+			x.name = table.create_val()
+			LogicExp(x.children[0])
+			LogicExp(x.children[2])
+			optable = {'Less':'slt', 'More':'sgt', 'Leq':'sle', 'Geq':'sge'}
+			print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+
+def cond(x : Node):
+	LogicExp(x.children[0])
+	x.name = x.children[0].name
+
 def stmt(x : Node):
 	if len(x.children) == 0:
 		return
@@ -149,7 +199,7 @@ def stmt(x : Node):
 	if len(x.children) == 1 and x.children[0].type == 'Block':
 		block(x.children[0])
 		return
-	# exp;
+	# Block;
 
 	if len(x.children) == 2:
 		exp(x.children[1])
@@ -166,7 +216,41 @@ def stmt(x : Node):
 		print('store i32', x.children[2].name, ', i32*', table.table[val.name], file = outputFile)
 		table.create_reg(val.name)
 		print('%s = load i32, i32* %s'%(table.get_reg(val.name), table.table[val.name]), file = outputFile)
+		return
 	# LVal Equal Exp Semicolon
+
+	if len(x.children) == 4:
+		Then = table.create_flag()
+		Next = table.create_flag()
+		cond(x.children[0])
+		print('br', Then, Next, file = outputFile)
+		
+		print(Then + ':', file = outputFile)
+		stmt(x.children[1])
+		print('br label', Next, file = outputFile)
+
+		print(Next + ':', file = outputFile)
+		return
+	# If LPar Cond RPar Stmt
+
+	if len(x.children) == 5:
+		Then = table.create_flag()
+		Else = table.create_flag()
+		Next = table.create_flag()
+		cond(x.children[0])
+		print('br', Then, Next, file = outputFile)
+		
+		print(Then + ':', file = outputFile)
+		stmt(x.children[1])
+		print('br label', Next, file = outputFile)
+
+		print(Else + ':', file = outputFile)
+		stmt(x.children[2])
+		print('br label', Next, file = outputFile)
+
+		print(Next + ':', file = outputFile)
+		return
+	# If LPar Cond RPar Stmt Else Stmt
 
 def dfs(x : Node):
 	if x.type == 'CompUnit':

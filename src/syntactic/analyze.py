@@ -157,9 +157,13 @@ def p_Stmt(p):
 		l = Node('Equal')
 		p[0] = Node('Stmt', children = [p[1], l, p[3]])
 	elif len(p)==6:
-		p[0] = Node('Stmt', children = [p[3], p[5]])
-	else:
-		p[0] = Node('Stmt', children = [p[3], p[5], p[7]])
+		l = Node('(')
+		r = Node(')')
+		p[0] = Node('Stmt', children = [p[3], p[5], l, r])
+	elif len(p) == 8:
+		l = Node('(')
+		r = Node(')')
+		p[0] = Node('Stmt', children = [p[3], p[5], p[7], l, r])
 
 def p_LVal(p):
 	'''
