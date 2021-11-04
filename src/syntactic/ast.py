@@ -2,14 +2,17 @@ from values import *
 from syntactic.node import Node
 from syntactic.table import table
 
-def tarnsInttoBool():
-	
-	pass
+def transInttoBool(x : Node):
+	s = table.create_val()
+	print("%s = icmp ne i32 %s, 0"%(s, x.name), file = outputFile)
+	x.name = s
+	x.isBool = True
 
 def transBooltoInt(x : Node):
 	s = table.create_val()
 	print("%s = zext i1 %s to i32"%(s, x.name), file = outputFile)
 	x.name = s
+	x.isBool = False
 
 def exp(x : Node):
 	if x.type == 'Exp':
@@ -153,26 +156,34 @@ def logicExp(x : Node):
 		else:
 			logicExp(x.children[0])
 			logicExp(x.children[1])
-			total = table.create_val()
 			x.name = table.create_val()
-			print("%s = or i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
-			print("%s = icmp sge i1 %s, 0"%(x.name, total), file = outputFile)
+			print("%s = or i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			# x must be i32!
 	elif x.type == 'LAndExp':
 		if len(x.children) == 1:
 			logicExp(x.children[0])
 			x.name = x.children[0].name
+			x.isBool = x.children[0].isBool
+			if x.isBool == True:
+				transBooltoInt(x)
 		else:
 			logicExp(x.children[0])
 			logicExp(x.children[1])
-			total = table.create_val()
+			if x.children[0].isBool == True:
+				transBooltoInt(x.children[0])
+			if x.children[2].isBool == True:
+				transBooltoInt(x.children[2])
 			x.name = table.create_val()
-			print("%s = and i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
-			print("%s = icmp eq i1 %s, 1"%(x.name, total), file = outputFile)
+			print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			x.isBool = False
+			# x must be i32!
 	elif x.type == 'EqExp':
 		if len(x.type == 'RelExp'):
 			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
+			if x.isBool == False:
+				transInttoBool(x)
 		else:
 			x.name = table.create_val()
 			logicExp(x.children[0])
@@ -247,11 +258,11 @@ def stmt(x : Node):
 		Then = table.create_flag()
 		Next = table.create_flag()
 		cond(x.children[0])
-		print('br', Then, Next, file = outputFile)
+		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Next), file = outputFile)
 		
 		print(Then + ':', file = outputFile)
 		stmt(x.children[1])
-		print('br label', Next, file = outputFile)
+		print('br label %', Next, file = outputFile)
 
 		print(Next + ':', file = outputFile)
 		return
@@ -262,15 +273,15 @@ def stmt(x : Node):
 		Else = table.create_flag()
 		Next = table.create_flag()
 		cond(x.children[0])
-		print('br', Then, Next, file = outputFile)
+		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Else), file = outputFile)
 		
 		print(Then + ':', file = outputFile)
 		stmt(x.children[1])
-		print('br label', Next, file = outputFile)
+		print('br label %', Next, file = outputFile)
 
 		print(Else + ':', file = outputFile)
 		stmt(x.children[2])
-		print('br label', Next, file = outputFile)
+		print('br label %', Next, file = outputFile)
 
 		print(Next + ':', file = outputFile)
 		return
