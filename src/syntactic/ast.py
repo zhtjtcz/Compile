@@ -162,7 +162,7 @@ def logicExp(x : Node):
 			logicExp(x.children[0])
 			logicExp(x.children[1])
 			x.name = table.create_val()
-			print("%s = or i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			# x must be i32!
 	elif x.type == 'LAndExp':
 		if len(x.children) == 1:
@@ -179,7 +179,8 @@ def logicExp(x : Node):
 			if x.children[1].isBool == True:
 				transBooltoInt(x.children[1])
 			x.name = table.create_val()
-			print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			print(x.children[0].name, x.children[0].isBool, x.children[1].isBool)
+			print("%s = and i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			x.isBool = False
 			# x must be i32!
 	elif x.type == 'EqExp':
@@ -202,6 +203,7 @@ def logicExp(x : Node):
 				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
 			else:
 				print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+			x.isBool = True
 		# 需要确保这里返回的一定是 i1 类型
 		# 上面只有逻辑运算
 	elif x.type == 'RelExp':
