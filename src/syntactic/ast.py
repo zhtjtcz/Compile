@@ -199,9 +199,9 @@ def logicExp(x : Node):
 			if x.children[2].isBool == True:
 				transBooltoInt(x.children[2])
 
-			if x.children[1].type == 'Deq':
+			if x.children[1].type == '==':
 				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
-			else:
+			elif x.children[1].type == '!=':
 				print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
 			x.isBool = True
 		# 需要确保这里返回的一定是 i1 类型
