@@ -188,8 +188,6 @@ def logicExp(x : Node):
 			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
-			if x.isBool == False:
-				transInttoBool(x)
 		else:
 			x.name = table.create_val()
 			logicExp(x.children[0])
