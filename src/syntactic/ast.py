@@ -53,7 +53,7 @@ def exp(x : Node):
 			x.name = table.create_val()
 			if x.children[0].type == '+':
 				print(x.name, '= add i32 0,', x.children[1].name, file = outputFile)
-			elif x.children[0].type == '+':
+			elif x.children[0].type == '-':
 				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
 			elif x.children[0].type == '!':
 				print("%s = icmp eq i32 %s, 0"%(x.name, x.children[1].name), file = outputFile)
