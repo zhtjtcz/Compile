@@ -211,15 +211,13 @@ def logicExp(x : Node):
 			x.isBool = False
 		else:
 			x.name = table.create_val()
-			if x.isBool == True:
-				transBooltoInt(x)(x.children[0])
-			if x.isBool == True:
-				transBooltoInt(x)(x.children[0])
-			# Bool check
 			logicExp(x.children[0])
-			logicExp(x.children[2])
-			optable = {'Less':'slt', 'More':'sgt', 'Leq':'sle', 'Geq':'sge'}
-			print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+			exp(x.children[2])
+			if x.children[0].isBool == True:
+				transBooltoInt(x.children[0])
+			# Bool check
+			optable = {'<':'slt', '>':'sgt', '<=':'sle', '>=':'sge'}
+			print("%s = icmp %s i32 %s, %s"%(x.name, optable[x.children[1].type], x.children[0].name, x.children[2].name), file = outputFile)
 			x.isBool = True
 
 def cond(x : Node):
