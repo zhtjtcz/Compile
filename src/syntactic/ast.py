@@ -56,7 +56,7 @@ def exp(x : Node):
 			elif x.children[0].type == '+':
 				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
 			elif x.children[0].type == '!':
-				print("%s = icmp ne i32 %s, 0"%(x.name, x.children[1].name), file = outputFile)
+				print("%s = icmp eq i32 %s, 0"%(x.name, x.children[1].name), file = outputFile)
 				transBooltoInt(x)
 		elif len(x.children) == 3:
 			x.name = table.create_val()
