@@ -119,6 +119,17 @@ def constdecl(x : Node):
 	for i in x.children:
 		constdef(i)
 
+def blockItems(x : Node):
+	for i in x.children:
+		print(i.type)
+		if i.type == 'Decl':
+			decl(i)
+		else:
+			stmt(i)
+
+def block(x : Node):
+	blockItems(x.children[0])
+
 def decl(x : Node):
 	if x.children[0].type == 'ConstDecl':
 		constdecl(x.children[0])
@@ -130,8 +141,13 @@ def stmt(x : Node):
 		return
 	# ;
 
-	if len(x.children) == 1:
+	if len(x.children) == 1 and x.children[0].type == 'Exp':
 		exp(x.children[0])
+		return
+	# exp;
+
+	if len(x.children) == 1 and x.children[0].type == 'Block':
+		block(x.children[0])
 		return
 	# exp;
 
@@ -152,22 +168,16 @@ def stmt(x : Node):
 		print('%s = load i32, i32* %s'%(table.get_reg(val.name), table.table[val.name]), file = outputFile)
 	# LVal Equal Exp Semicolon
 
-def block(x : Node):
-	for i in x.children:
-		print(i.type)
-		if i.type == 'Decl':
-			decl(i)
-		else:
-			stmt(i)
-
 def dfs(x : Node):
 	if x.type == 'CompUnit':
 		dfs(x.children[0])
 	elif x.type == 'FuncDef':
-		print('define dso_local i32 @main()', file = outputFile, end = '')
+		print('define dso_local i32 @main(){', file = outputFile)
 		dfs(x.children[-1])
+		print('}', file = outputFile)
 		# TODO check the ident -> lab x
 	elif x.type == 'Block':
-		print('{', file = outputFile)
-		block(x.children[0])
-		print('}', file = outputFile)
+		block(x)
+	else:
+		print("Some error!")
+		exit(1)

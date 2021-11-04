@@ -51,4 +51,9 @@ class Table():
 			exit(1)
 		self.const[name] = True
 
+	def create_flag(self):
+		self.id += 1
+		return '%x' + str(self.id)
+	# Goto flag
+
 table = Table()
