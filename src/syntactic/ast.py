@@ -162,6 +162,7 @@ def LogicExp(x : Node):
 	elif x.type == 'EqExp':
 		if len(x.type == 'RelExp'):
 			LogicExp(x.children[0])
+			# TODO
 			x.name = x.children[0].name
 		else:
 			x.name = table.create_val()
@@ -171,6 +172,8 @@ def LogicExp(x : Node):
 				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
 			else:
 				print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+		# 需要确保这里返回的一定是 i1 类型
+		# 上面只有逻辑运算
 	elif x.type == 'RelExp':
 		if len(x.children) == 1:
 			exp(x.children[0])
