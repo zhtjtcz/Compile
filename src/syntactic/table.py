@@ -52,8 +52,9 @@ class Table():
 		self.const[name] = True
 
 	def create_flag(self):
+		s = '%x' + str(self.id)
 		self.id += 1
-		return '%x' + str(self.id)
+		return s
 	# Goto flag
 
 table = Table()

@@ -53,8 +53,11 @@ def exp(x : Node):
 			x.name = table.create_val()
 			if x.children[0].type == '+':
 				print(x.name, '= add i32 0,', x.children[1].name, file = outputFile)
-			else:
+			elif x.children[0].type == '+':
 				print(x.name, '= sub i32 0,', x.children[1].name, file = outputFile)
+			elif x.children[0].type == '!':
+				print("%s = icmp ne i32 %s, 0"%(x.name, x.children[1].name), file = outputFile)
+				transBooltoInt(x)
 		elif len(x.children) == 3:
 			x.name = table.create_val()
 			if x.children[0].name == 'getint':
@@ -74,6 +77,8 @@ def exp(x : Node):
 			if x.children[0].type == 'Number':
 				x.name = str(x.children[0].value)
 			else:
+				table.create_reg(x.children[0].name)
+				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), table.table[x.children[0].name]), file = outputFile)
 				x.name = table.get_reg(x.children[0].name)
 				# Val
 		else:
@@ -178,7 +183,7 @@ def logicExp(x : Node):
 			x.isBool = False
 			# x must be i32!
 	elif x.type == 'EqExp':
-		if len(x.type == 'RelExp'):
+		if len(x.children) == 1:
 			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
@@ -220,6 +225,7 @@ def logicExp(x : Node):
 def cond(x : Node):
 	logicExp(x.children[0])
 	x.name = x.children[0].name
+	transInttoBool(x)
 
 def stmt(x : Node):
 	if len(x.children) == 0:
@@ -249,8 +255,6 @@ def stmt(x : Node):
 			exit(1)
 		exp(x.children[2])
 		print('store i32', x.children[2].name, ', i32*', table.table[val.name], file = outputFile)
-		table.create_reg(val.name)
-		print('%s = load i32, i32* %s'%(table.get_reg(val.name), table.table[val.name]), file = outputFile)
 		return
 	# LVal Equal Exp Semicolon
 
@@ -260,11 +264,11 @@ def stmt(x : Node):
 		cond(x.children[0])
 		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Next), file = outputFile)
 		
-		print(Then + ':', file = outputFile)
+		print(Then[1:] + ':', file = outputFile)
 		stmt(x.children[1])
-		print('br label %', Next, file = outputFile)
+		print('br label', Next, file = outputFile)
 
-		print(Next + ':', file = outputFile)
+		print(Next[1:] + ':', file = outputFile)
 		return
 	# If LPar Cond RPar Stmt
 
@@ -275,15 +279,15 @@ def stmt(x : Node):
 		cond(x.children[0])
 		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Else), file = outputFile)
 		
-		print(Then + ':', file = outputFile)
+		print(Then[1:] + ':', file = outputFile)
 		stmt(x.children[1])
-		print('br label %', Next, file = outputFile)
+		print('br label', Next, file = outputFile)
 
-		print(Else + ':', file = outputFile)
+		print(Else[1:] + ':', file = outputFile)
 		stmt(x.children[2])
-		print('br label %', Next, file = outputFile)
+		print('br label', Next, file = outputFile)
 
-		print(Next + ':', file = outputFile)
+		print(Next[1:] + ':', file = outputFile)
 		return
 	# If LPar Cond RPar Stmt Else Stmt
 
