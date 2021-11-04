@@ -1,8 +1,7 @@
 int main(){
-	int a = 10;
-	int b = 20;
-	int c = 10;
-	if (a == b == a)
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	if (a && b && c)
 		return 1;
-	else return 2;
 }
