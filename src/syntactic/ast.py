@@ -2,6 +2,15 @@ from values import *
 from syntactic.node import Node
 from syntactic.table import table
 
+def tarnsInttoBool():
+	
+	pass
+
+def transBooltoInt(x : Node):
+	s = table.create_val()
+	print("%s = zext i1 %s to i32"%(s, x.name), file = outputFile)
+	x.name = s
+
 def exp(x : Node):
 	if x.type == 'Exp':
 		exp(x.children[0])
@@ -136,38 +145,43 @@ def decl(x : Node):
 	else:
 		vardecl(x.children[0])
 
-def LogicExp(x : Node):
+def logicExp(x : Node):
 	if x.type == 'LOrExp':
 		if len(x.children) == 1:
-			LogicExp(x.children[0])
+			logicExp(x.children[0])
 			x.name = x.children[0].name
 		else:
-			LogicExp(x.children[0])
-			LogicExp(x.children[1])
+			logicExp(x.children[0])
+			logicExp(x.children[1])
 			total = table.create_val()
 			x.name = table.create_val()
 			print("%s = or i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
 			print("%s = icmp sge i1 %s, 0"%(x.name, total), file = outputFile)
 	elif x.type == 'LAndExp':
 		if len(x.children) == 1:
-			LogicExp(x.children[0])
+			logicExp(x.children[0])
 			x.name = x.children[0].name
 		else:
-			LogicExp(x.children[0])
-			LogicExp(x.children[1])
+			logicExp(x.children[0])
+			logicExp(x.children[1])
 			total = table.create_val()
 			x.name = table.create_val()
 			print("%s = and i1 %s, %s"%(total, x.children[0].name, x.children[1].name), file = outputFile)
 			print("%s = icmp eq i1 %s, 1"%(x.name, total), file = outputFile)
 	elif x.type == 'EqExp':
 		if len(x.type == 'RelExp'):
-			LogicExp(x.children[0])
-			# TODO
+			logicExp(x.children[0])
 			x.name = x.children[0].name
+			x.isBool = x.children[0].isBool
 		else:
 			x.name = table.create_val()
-			LogicExp(x.children[0])
-			LogicExp(x.children[2])
+			logicExp(x.children[0])
+			logicExp(x.children[2])
+			if x.children[0].isBool == True:
+				transBooltoInt(x.children[0])
+			if x.children[2].isBool == True:
+				transBooltoInt(x.children[2])
+
 			if x.children[1].type == 'Deq':
 				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
 			else:
@@ -178,15 +192,22 @@ def LogicExp(x : Node):
 		if len(x.children) == 1:
 			exp(x.children[0])
 			x.name = x.children[0].name
+			x.isBool = False
 		else:
 			x.name = table.create_val()
-			LogicExp(x.children[0])
-			LogicExp(x.children[2])
+			if x.isBool == True:
+				transBooltoInt(x)(x.children[0])
+			if x.isBool == True:
+				transBooltoInt(x)(x.children[0])
+			# Bool check
+			logicExp(x.children[0])
+			logicExp(x.children[2])
 			optable = {'Less':'slt', 'More':'sgt', 'Leq':'sle', 'Geq':'sge'}
 			print("%s = icmp ne i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
+			x.isBool = True
 
 def cond(x : Node):
-	LogicExp(x.children[0])
+	logicExp(x.children[0])
 	x.name = x.children[0].name
 
 def stmt(x : Node):

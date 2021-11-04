@@ -7,6 +7,7 @@ class Node():
 		# If it's ident, it store the real name
 		
 		self.add = ''
+		self.isBool = False
 		self.scope = scope
 		# TODO using it
 		self.value = value
