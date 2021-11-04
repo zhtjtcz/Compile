@@ -176,8 +176,8 @@ def logicExp(x : Node):
 			logicExp(x.children[1])
 			if x.children[0].isBool == True:
 				transBooltoInt(x.children[0])
-			if x.children[2].isBool == True:
-				transBooltoInt(x.children[2])
+			if x.children[1].isBool == True:
+				transBooltoInt(x.children[1])
 			x.name = table.create_val()
 			print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			x.isBool = False
