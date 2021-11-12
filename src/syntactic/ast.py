@@ -78,7 +78,7 @@ def exp(x : Node):
 				x.name = str(x.children[0].value)
 			else:
 				table.create_reg(x.children[0].name)
-				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), table.table[x.children[0].name]), file = outputFile)
+				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), table.tree.table[x.children[0].name]), file = outputFile)
 				x.name = table.get_reg(x.children[0].name)
 				# Val
 		else:
@@ -92,7 +92,7 @@ def check_can_cal(x : Node):
 	if x == None:
 		return
 	if x.type == 'PrimaryExp' and x.children[0].type == 'LVal':
-		if x.children[0].name not in table.const.keys():
+		if x.children[0].name not in table.tree.const.keys():
 			exit(1)
 		# Calculate the value using no const val
 	for i in x.children:
@@ -252,7 +252,7 @@ def stmt(x : Node):
 		if val.name in table.const.keys():
 			exit(1)
 		exp(x.children[2])
-		print('store i32', x.children[2].name, ', i32*', table.table[val.name], file = outputFile)
+		print('store i32', x.children[2].name, ', i32*', table.tree.table[val.name], file = outputFile)
 		return
 	# LVal Equal Exp Semicolon
 
