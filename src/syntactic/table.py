@@ -1,10 +1,20 @@
 from values import *
 
-class Table():
+class BlockTree():
 	def __init__(self):
+		self.fa = None
 		self.table = {}
 		self.reg = {}
 		self.const = {}
+
+class Table():
+	def __init__(self):
+		'''
+		self.table = {}
+		self.reg = {}
+		self.const = {}
+		'''
+		self.tree = BlockTree()
 		self.id = 1
 
 	def create_val(self, name = None):
@@ -14,11 +24,11 @@ class Table():
 			return s
 			# Simply exp or caclulation result
 		else:
-			if name in self.table.keys():
+			if name in self.tree.table.keys():
 				exit(1)
 			else:
 				s = '%x' + str(self.id)
-				self.table[name] = s
+				self.tree.table[name] = s
 				self.id += 1
 				print(s, '= alloca i32', file = outputFile)
 				return s
@@ -28,28 +38,28 @@ class Table():
 		if name == None:
 			exit(1)
 		else:
-			if name not in self.table.keys():
+			if name not in self.tree.table.keys():
 				exit(1)
 			else:
-				return self.table[name]
+				return self.tree.table[name]
 
 	def create_reg(self, name = None):
-		if name == None or name not in self.table.keys():
+		if name == None or name not in self.tree.table.keys():
 			exit(1)
 		else:
-			self.reg[name] = '%x' + str(self.id)
+			self.tree.reg[name] = '%x' + str(self.id)
 			self.id += 1
 
 	def get_reg(self, name = None):
-		if name == None or name not in self.table.keys():
+		if name == None or name not in self.tree.table.keys():
 			exit(1)
 		else:
-			return self.reg[name]
+			return self.tree.reg[name]
 
 	def insert_const(self, name = None):
-		if name == None or name in self.const.keys():
+		if name == None or name in self.tree.const.keys():
 			exit(1)
-		self.const[name] = True
+		self.tree.const[name] = True
 
 	def create_flag(self):
 		s = '%x' + str(self.id)
@@ -57,4 +67,15 @@ class Table():
 		return s
 	# Goto flag
 
+	def into_block(self):
+		node = BlockTree()
+		node.fa = self.tree
+		node.reg = self.tree.reg
+		node.table = self.tree.table
+		node.const = self.tree.const
+		self.tree = node
+	
+	def out_block(self):
+		self.tree = self.tree.fa
+	
 table = Table()
