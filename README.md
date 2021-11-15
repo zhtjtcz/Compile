@@ -2,6 +2,9 @@
 
 Hello the compile lab!
 
+lex.py : 1099
+yacc.py : 3503
+
 # Time line
 
 纯手写 Token 识别。
@@ -17,3 +20,4 @@ Hello the compile lab!
 10.29 pass Lab 3
 
 11.4 pass Lab 4
+
