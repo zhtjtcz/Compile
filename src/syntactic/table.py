@@ -70,14 +70,17 @@ class Table():
 				return node.table[name]
 
 	def get_reg(self, name = None):
-		if name == None or self.find_val_name(name) == None:
+		if name == None or self.find_val_name(self.tree, name) == None:
 			exit(1)
 		else:
 			node = self.find_val_name(self.tree, name)
 			return node.reg[name]
 
 	def into_block(self):
-		node = self.tree.copy()
+		node = BlockTree()
+		node.table = {}
+		node.reg = {}
+		node.const = {}
 		node.fa = self.tree
 		# Must be shallow copy!
 		self.tree = node

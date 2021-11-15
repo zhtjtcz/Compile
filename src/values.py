@@ -11,7 +11,7 @@ else:
 # ENCODING = 'utf-8'
 
 if LOCAL:
-	inputfile = open('test.in', 'r')
+	inputfile = open('a.c', 'r')
 	outputFile = open('test.out', 'w')
 else:
 	inputfile = open(sys.argv[1], 'r')

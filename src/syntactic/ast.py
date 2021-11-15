@@ -78,7 +78,8 @@ def exp(x : Node):
 				x.name = str(x.children[0].value)
 			else:
 				table.create_reg(x.children[0].name)
-				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), table.tree.table[x.children[0].name]), file = outputFile)
+				node = table.find_val_name(table.tree, x.children[0].name)
+				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
 				x.name = table.get_reg(x.children[0].name)
 				# Val
 		else:
@@ -236,7 +237,9 @@ def stmt(x : Node):
 	# exp;
 
 	if len(x.children) == 1 and x.children[0].type == 'Block':
+		table.into_block()
 		block(x.children[0])
+		table.out_block()
 		return
 	# Block;
 
@@ -249,10 +252,12 @@ def stmt(x : Node):
 
 	if len(x.children) == 3:
 		val = x.children[0]
-		if val.name in table.tree.const.keys():
+		if table.find_val_name(table.tree, val) == None:
 			exit(1)
+		# Can't find the value
 		exp(x.children[2])
-		print('store i32', x.children[2].name, ', i32*', table.tree.table[val.name], file = outputFile)
+		node = table.find_val_name(table.tree, val)
+		print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
 		return
 	# LVal Equal Exp Semicolon
 
@@ -298,7 +303,9 @@ def dfs(x : Node):
 		print('}', file = outputFile)
 		# TODO check the ident -> lab x
 	elif x.type == 'Block':
+		table.into_block()
 		block(x)
+		table.out_block()
 	else:
 		print("Some error!")
 		exit(1)

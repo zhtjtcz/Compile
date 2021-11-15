@@ -19,8 +19,8 @@ int getarray(int a[]) {
         scanf("%d", &a[i]);
     return n;
 }
-void putint(int a) { printf("%d", a); }
-void putch(int a) { printf("%c", a); }
+void putint(int a) { printf("%d\n", a); }
+void putch(int a) { printf("%c\n", a); }
 void putarray(int n, int a[]) {
     printf("%d:", n);
     for (int i = 0; i < n; i++)
