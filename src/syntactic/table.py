@@ -9,11 +9,6 @@ class BlockTree():
 
 class Table():
 	def __init__(self):
-		'''
-		self.table = {}
-		self.reg = {}
-		self.const = {}
-		'''
 		self.tree = BlockTree()
 		self.id = 1
 
@@ -33,33 +28,16 @@ class Table():
 				print(s, '= alloca i32', file = outputFile)
 				return s
 				# Ident
-	
-	def get_val(self, name = None):
-		if name == None:
-			exit(1)
-		else:
-			if name not in self.tree.table.keys():
-				exit(1)
-			else:
-				return self.tree.table[name]
 
 	def create_reg(self, name = None):
-		if name == None or name not in self.tree.table.keys():
+		if name == None or self.find_val_name(self.tree, name) == None:
 			exit(1)
 		else:
-			self.tree.reg[name] = '%x' + str(self.id)
+			node = self.find_val_name(self.tree, name)
+			node.reg[name] = '%x' + str(self.id)
+			# Global val or local val
+			# Insert into the father node
 			self.id += 1
-
-	def get_reg(self, name = None):
-		if name == None or name not in self.tree.table.keys():
-			exit(1)
-		else:
-			return self.tree.reg[name]
-
-	def insert_const(self, name = None):
-		if name == None or name in self.tree.const.keys():
-			exit(1)
-		self.tree.const[name] = True
 
 	def create_flag(self):
 		s = '%x' + str(self.id)
@@ -67,15 +45,44 @@ class Table():
 		return s
 	# Goto flag
 
+	def insert_const(self, name = None):
+		if name == None or name in self.tree.const.keys():
+			exit(1)
+		self.tree.const[name] = True
+
+	def find_val_name(self, x : BlockTree, name):
+		if x == None:
+			return None
+		if name in x.table.keys():
+			return x
+		else:
+			return self.find_val_name(x.fa, name)
+		# Find a val name in the block-tree
+
+	def get_val(self, name = None):
+		if name == None:
+			exit(1)
+		else:
+			if self.find_val_name(name) == None:
+				exit(1)
+			else:
+				node = self.find_val_name(self.tree, name)
+				return node.table[name]
+
+	def get_reg(self, name = None):
+		if name == None or self.find_val_name(name) == None:
+			exit(1)
+		else:
+			node = self.find_val_name(self.tree, name)
+			return node.reg[name]
+
 	def into_block(self):
-		node = BlockTree()
+		node = self.tree.copy()
 		node.fa = self.tree
-		node.reg = self.tree.reg
-		node.table = self.tree.table
-		node.const = self.tree.const
+		# Must be shallow copy!
 		self.tree = node
 	
 	def out_block(self):
 		self.tree = self.tree.fa
-	
+
 table = Table()

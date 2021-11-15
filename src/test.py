@@ -1,7 +1,11 @@
 class A():
 	def __init__(self):
-		self.x = 1
+		self.x = {}
 
 a = A()
-a.y = 2
-print(a.y)
+a.x[1] = 2
+b = A()
+b.x = a.x.copy()
+b.x[2] = 3
+print(a.x)
+print(b.x)
