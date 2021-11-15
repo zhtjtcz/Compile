@@ -5,9 +5,12 @@ from values import *
 
 def p_CompUnit(p):
 	'''
-	CompUnit : FuncDef
+	CompUnit : Decls FuncDef
 	'''
-	p[0] = Node('CompUnit', children = p[1:])
+	if p[1] == None:
+		p[0] = Node('CompUnit', children = p[2:])
+	else:
+		p[0] = Node('CompUnit', children = p[1:])
 
 def p_Decls(p):
 	'''
