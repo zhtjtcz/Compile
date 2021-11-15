@@ -9,6 +9,20 @@ def p_CompUnit(p):
 	'''
 	p[0] = Node('CompUnit', children = p[1:])
 
+def p_Decls(p):
+	'''
+	Decsl : Decl Decls
+		  |
+	'''
+	if len(p) == 1:
+		return None
+	else:
+		p[0] = Node('Decls')
+		if p[2] == None:
+			p[0].children = [p[1]]
+		else:
+			p[0].children = [p[1]] + p[2].children[:]
+
 def p_Decl(p):
 	'''
 	Decl : ConstDecl
