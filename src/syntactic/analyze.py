@@ -14,7 +14,7 @@ def p_CompUnit(p):
 
 def p_Decls(p):
 	'''
-	Decsl : Decl Decls
+	Decls : Decl Decls
 		  |
 	'''
 	if len(p) == 1:
