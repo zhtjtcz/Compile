@@ -1,9 +1,9 @@
 # Compile Lab
 
-Hello the compile lab!
+1921 编译原理课程大作业。
 
-lex.py : 1099
-yacc.py : 3503
+主要任务是手写一个小型编译器，可以编译`minisy`语言。
+
 
 # Time line
 
