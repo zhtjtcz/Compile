@@ -252,11 +252,11 @@ def stmt(x : Node):
 
 	if len(x.children) == 3:
 		val = x.children[0]
-		if table.find_val_name(table.tree, val) == None:
+		if table.find_val_name(table.tree, val.name) == None:
 			exit(1)
 		# Can't find the value
 		exp(x.children[2])
-		node = table.find_val_name(table.tree, val)
+		node = table.find_val_name(table.tree, val.name)
 		print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
 		return
 	# LVal Equal Exp Semicolon
@@ -296,7 +296,10 @@ def stmt(x : Node):
 
 def dfs(x : Node):
 	if x.type == 'CompUnit':
-		dfs(x.children[0])
+		if len(x.children) == 2:
+			dfs(x.children[1])
+		else:
+			dfs(x.children[0])
 	elif x.type == 'FuncDef':
 		print('define dso_local i32 @main(){', file = outputFile)
 		dfs(x.children[-1])
