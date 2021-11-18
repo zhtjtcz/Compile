@@ -210,12 +210,12 @@ def globalVal(x : Node):
 	table.tree.table[x.children[0].name] = name
 	
 	if len(x.children) == 1:
-		print("%s = dso_local constant i32 0"%(name), file = outputFile)
+		print("%s = dso_local global i32 0"%(name), file = outputFile)
 		globals[x.children[0].name] = 0
 	else:
 		checkCanCal(x.children[1].children[0])
 		val = globalCal(x.children[1].children[0].children[0])
-		print("%s = dso_local constant i32 %d"%(name, val), file = outputFile)
+		print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
 		globals[x.children[0].name] = val
 
 def globalDefine(x : Node):
