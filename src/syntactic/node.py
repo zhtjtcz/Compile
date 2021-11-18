@@ -1,5 +1,5 @@
 class Node():
-	def __init__(self, type, children = [], name = '', value = 0, scope = ''):
+	def __init__(self, type, children = [], name = '', value = 0):
 		self.type = type
 		self.children = children
 		self.name = name
@@ -8,8 +8,6 @@ class Node():
 		
 		self.add = ''
 		self.isBool = False
-		self.scope = scope
-		# TODO using it
 		self.value = value
 
 	def dfs_test(self, x, d, fa):
