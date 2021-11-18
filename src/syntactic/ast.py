@@ -1,6 +1,6 @@
 from values import *
 from syntactic.node import Node
-from syntactic.table import table,globals
+from syntactic.table import table,globals,labelTree
 
 def transInttoBool(x : Node):
 	s = table.create_val()

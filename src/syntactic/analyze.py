@@ -145,6 +145,8 @@ def p_Stmt(p):
 	'''
 	Stmt : Semicolon
 		 | Block
+		 | Break
+		 | Continue
 		 | Exp Semicolon
 		 | Return Exp Semicolon
 		 | LVal Equal Exp Semicolon
@@ -154,7 +156,11 @@ def p_Stmt(p):
 	'''
 	if len(p) == 2:
 		p[0] = Node('Stmt')
-		if p[1] !=';' and p[1].type == 'Block':
+		if p[1] == 'while' or p[1] == 'continue':
+			p[0].children = [Node(p[1])]
+		elif p[1] == ';':
+			return
+		elif p[1].type == 'Block':
 			p[0].children = p[1:]
 	elif len(p) == 3:
 		p[0] = Node('Stmt', children = [p[1]])

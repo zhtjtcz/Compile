@@ -97,5 +97,23 @@ class Table():
 	def out_block(self):
 		self.tree = self.tree.fa
 
+class LabelTree():
+	def __init__(self):
+		self.fa = None
+		self.node = None
+		self.continueLabel = ''
+		self.breakLabel = ''
+	
+	def intoWhile(self, continueLabel = '', breakLabel = ''):
+		newNode = LabelTree()
+		newNode.continueLabel = continueLabel
+		newNode.breakLabel = breakLabel
+		newNode.fa = self.node
+		self.node = newNode
+
+	def outWhile(self):
+		self.node = self.node.fa
+
 table = Table()
 globals = {}
+labelTree = LabelTree()
