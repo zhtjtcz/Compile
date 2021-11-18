@@ -148,6 +148,7 @@ def p_Stmt(p):
 		 | Exp Semicolon
 		 | Return Exp Semicolon
 		 | LVal Equal Exp Semicolon
+		 | While LPar Cond RPar Stmt
 		 | If LPar Cond RPar Stmt Else Stmt
 		 | If LPar Cond RPar Stmt
 	'''
@@ -162,7 +163,10 @@ def p_Stmt(p):
 	elif len(p) == 5:
 		p[0] = Node('Stmt', children = [p[1], Node('Equal'), p[3]])
 	elif len(p)==6:
-		p[0] = Node('Stmt', children = [p[3], p[5], Node('('), Node(')')])
+		if p[1] == 'While':
+			p[0] = Node('Stmt', children = [p[3], p[5]])
+		else:
+			p[0] = Node('Stmt', children = [p[3], p[5], Node('('), Node(')')])
 	elif len(p) == 8:
 		p[0] = Node('Stmt', children = [p[3], p[5], p[7], Node('('), Node(')')])
 

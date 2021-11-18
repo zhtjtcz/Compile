@@ -316,6 +316,11 @@ def stmt(x : Node):
 		return
 	# Block;
 
+	if len(x.children) == 2 and x.children[0].type == 'Cond':
+		#TODO add while
+		return
+	# While (Cond) Stmt;
+
 	if len(x.children) == 2:
 		exp(x.children[1])
 		print('ret i32', file = outputFile, end = ' ')

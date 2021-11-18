@@ -9,6 +9,7 @@ reserved = {
 	'const': 'Const',
 	'if': 'If',
 	'else': 'Else',
+	'while': 'While',
 }
 
 tokens = [
