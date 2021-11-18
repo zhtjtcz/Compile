@@ -139,10 +139,7 @@ def globalCal(x : Node):
 		else:
 			a = globalCal(x.children[2])
 			b = globalCal(x.children[0])
-			if x.children[1].type == '+':
-				return a+b
-			else:
-				return a-b
+			return a+b if x.children[1].type == '+' else a-b
 	elif x.type == 'MulExp':
 		if len(x.children) == 1:
 			return globalCal(x.children[0])
@@ -174,10 +171,9 @@ def globalCal(x : Node):
 			if x.children[0].type == 'Number':
 				return int(str(x.children[0].value))
 			else:
-				name = x.children[0].name
-				if name not in table.tree.const.keys():
+				if x.children[0].name not in table.tree.const.keys():
 					exit(1)
-				return globals[name]
+				return globals[x.children[0].name]
 				# Val
 		else:
 			return globalCal(x.children[1])
@@ -200,15 +196,12 @@ def globalVal(x : Node):
 		exit(1)
 	name = '@' + x.children[0].name	
 	table.tree.table[x.children[0].name] = name
-	
-	if len(x.children) == 1:
-		print("%s = dso_local global i32 0"%(name), file = outputFile)
-		globals[x.children[0].name] = 0
-	else:
+	val = 0
+	if len(x.children) != 1:
 		checkCanCal(x.children[1].children[0])
 		val = globalCal(x.children[1].children[0].children[0])
-		print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
-		globals[x.children[0].name] = val
+	print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
+	globals[x.children[0].name] = val
 
 def globalDefine(x : Node):
 	for i in x.children[0].children:
