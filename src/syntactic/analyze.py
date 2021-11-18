@@ -5,7 +5,7 @@ from values import *
 
 def p_CompUnit(p):
 	'''
-	CompUnit : Decls FuncDef
+	CompUnit : FuncDef
 	'''
 	if p[1] == None:
 		p[0] = Node('CompUnit', children = p[2:])
