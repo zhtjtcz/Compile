@@ -5,26 +5,22 @@ from values import *
 
 def p_CompUnit(p):
 	'''
-	CompUnit : FuncDef
+	CompUnit : Definelist
 	'''
 	if p[1] == None:
 		p[0] = Node('CompUnit', children = p[2:])
 	else:
 		p[0] = Node('CompUnit', children = p[1:])
 
-def p_Decls(p):
+def p_Definelist(p):
 	'''
-	Decls : Decl Decls
-		  |
+	Definelist : Decl Definelist
+			   | FuncDef
 	'''
-	if len(p) == 1:
-		return None
+	if len(p) == 2:
+		p[0] = Node('Definelist', children = p[1:])
 	else:
-		p[0] = Node('Decls')
-		if p[2] == None:
-			p[0].children = [p[1]]
-		else:
-			p[0].children = [p[1]] + p[2].children[:]
+		p[0] = Node('Definelist', children = [p[1]] + p[2].children)
 
 def p_Decl(p):
 	'''

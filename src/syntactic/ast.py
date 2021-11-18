@@ -296,10 +296,10 @@ def stmt(x : Node):
 
 def dfs(x : Node):
 	if x.type == 'CompUnit':
-		if len(x.children) == 2:
-			dfs(x.children[1])
-		else:
-			dfs(x.children[0])
+		dfs(x.children[0])
+	elif x.type == 'Definelist':
+		# TODO global define
+		dfs(x.children[-1])		# Main fuction define	
 	elif x.type == 'FuncDef':
 		print('define dso_local i32 @main(){', file = outputFile)
 		dfs(x.children[-1])
