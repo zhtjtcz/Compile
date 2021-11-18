@@ -110,8 +110,6 @@ def vardef(x : Node):
 		# s -> Exp
 		print('store i32', s.name, ', i32*', val.add, file = outputFile)
 		table.create_reg(val.name)
-		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
-		# Load it when create it
 
 def constdef(x : Node):
 	val = x.children[0]
@@ -123,8 +121,6 @@ def constdef(x : Node):
 	print('store i32', s.name, ', i32*', val.add, file = outputFile)
 	table.create_reg(val.name)
 	table.insert_const(val.name)
-	print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
-	# Load it when create it
 
 def vardecl(x : Node):
 	for i in x.children:
