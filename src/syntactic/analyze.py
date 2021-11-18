@@ -156,7 +156,7 @@ def p_Stmt(p):
 	'''
 	if len(p) == 2:
 		p[0] = Node('Stmt')
-		if p[1] == 'while' or p[1] == 'continue':
+		if p[1] == 'break' or p[1] == 'continue':
 			p[0].children = [Node(p[1])]
 		elif p[1] == ';':
 			return

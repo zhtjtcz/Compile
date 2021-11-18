@@ -304,6 +304,13 @@ def stmt(x : Node):
 		return
 	# ;
 
+	if len(x.children) == 1 and x.children[0].type in ['break', 'continue']:
+		if x.children[0].type == 'break':
+			print("br label %s"%(labelTree.node.breakLabel), file = outputFile)
+		else:
+			print("br label %s"%(labelTree.node.continueLabel), file = outputFile)
+	# break; or continue;
+
 	if len(x.children) == 1 and x.children[0].type == 'Exp':
 		exp(x.children[0])
 		return
@@ -320,6 +327,7 @@ def stmt(x : Node):
 		Check = table.create_flag()
 		Do = table.create_flag()
 		Next  = table.create_flag()
+		labelTree.intoWhile(continueLabel = Check, breakLabel = Next)
 
 		print("br label %s"%(Check), file = outputFile)
 		print(Check[1:] + ':', file = outputFile)
@@ -330,6 +338,7 @@ def stmt(x : Node):
 		stmt(x.children[1])
 		print("br label %s"%(Check), file = outputFile)
 		
+		labelTree.outWhile()
 		print(Next[1:] + ':', file = outputFile)
 		return
 	# While (Cond) Stmt;
