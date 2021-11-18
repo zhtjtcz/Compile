@@ -7,10 +7,7 @@ def p_CompUnit(p):
 	'''
 	CompUnit : Definelist
 	'''
-	if p[1] == None:
-		p[0] = Node('CompUnit', children = p[2:])
-	else:
-		p[0] = Node('CompUnit', children = p[1:])
+	p[0] = p[0] = Node('CompUnit', children = p[1:])
 
 def p_Definelist(p):
 	'''
@@ -56,8 +53,7 @@ def p_ConstDef(p):
 	'''
 	ConstDef : Ident Equal ConstInitVal
 	'''
-	p[1] = Node('Ident', name = p[1])
-	p[0] = Node('ConstDef', children = [p[1], p[3]])
+	p[0] = Node('ConstDef', children = [Node('Ident', name = p[1]), p[3]])
 
 def p_ConstInitVal(p):
 	'''
@@ -92,11 +88,10 @@ def p_VarDef(p):
 	VarDef : Ident Equal InitVal
            | Ident
 	'''
+	x = Node("Ident", name = p[1])
 	if len(p) == 2:
-		x = Node("Ident", name = p[1])
 		p[0] = Node("VarDef", children = [x])
 	else:
-		x = Node("Ident", name = p[1])
 		p[0] = Node('VarDef', children = [x, p[3]])
 
 def p_InitVal(p):
@@ -109,9 +104,9 @@ def p_Funcdef(p):
 	'''
 	FuncDef : FuncType Main LPar RPar Block
 	'''
-	l = Node('LBrace', name = '(')
-	r = Node('RBrace', name = ')')
-	x = Node('Ident', name = 'main')
+	l = Node('LBrace')
+	r = Node('RBrace')
+	x = Node('Ident')
 	p[0] = Node('FuncDef', children = [p[1], x, l, r, p[5]])
 
 def p_FuncType(p):
@@ -145,7 +140,6 @@ def p_BlockItem(p):
 			  | Stmt
 	'''
 	p[0] = p[1]
-	# p[0] = Node('BlockItem', children = p[1:])
 
 def p_Stmt(p):
 	'''
@@ -164,19 +158,13 @@ def p_Stmt(p):
 	elif len(p) == 3:
 		p[0] = Node('Stmt', children = [p[1]])
 	elif len(p) == 4:
-		l = Node('Return')
-		p[0] = Node('Stmt', children = [l, p[2]])
+		p[0] = Node('Stmt', children = [Node('Return'), p[2]])
 	elif len(p) == 5:
-		l = Node('Equal')
-		p[0] = Node('Stmt', children = [p[1], l, p[3]])
+		p[0] = Node('Stmt', children = [p[1], Node('Equal'), p[3]])
 	elif len(p)==6:
-		l = Node('(')
-		r = Node(')')
-		p[0] = Node('Stmt', children = [p[3], p[5], l, r])
+		p[0] = Node('Stmt', children = [p[3], p[5], Node('('), Node(')')])
 	elif len(p) == 8:
-		l = Node('(')
-		r = Node(')')
-		p[0] = Node('Stmt', children = [p[3], p[5], p[7], l, r])
+		p[0] = Node('Stmt', children = [p[3], p[5], p[7], Node('('), Node(')')])
 
 def p_LVal(p):
 	'''
@@ -198,8 +186,7 @@ def p_Addexp(p):
 	'''
 
 	if len(p) > 2:
-		op = Node(p[2])
-		p[0] = Node('AddExp', children = [p[1], op, p[3]])
+		p[0] = Node('AddExp', children = [p[1], Node(p[2]), p[3]])
 	else:
 		p[0] = Node('AddExp', children = p[1:])
 
@@ -211,8 +198,7 @@ def p_MulExp(p):
 		   | MulExp Mod UnaryExp
 	'''
 	if len(p) > 2:
-		op = Node(p[2])
-		p[0] = Node('MulExp', children = [p[1], op, p[3]])
+		p[0] = Node('MulExp', children = [p[1], Node(p[2]), p[3]])
 	else:
 		p[0] = Node('MulExp', children = p[1:])
 
@@ -311,8 +297,7 @@ def p_EqExp(p):
 	if len(p) == 2:
 		p[0] = Node('EqExp', children = p[1:])
 	else:
-		op = Node(p[2])
-		p[0] = Node('EqExp', children = [p[1], op, p[3]])
+		p[0] = Node('EqExp', children = [p[1], Node(p[2]), p[3]])
 
 def p_RelExp(p):
 	'''
@@ -325,8 +310,7 @@ def p_RelExp(p):
 	if len(p) == 2:
 		p[0] = Node('RelExp', children = [p[1]])
 	else:
-		op = Node(p[2])
-		p[0] = Node('RelExp', children = [p[1], op, p[3]])
+		p[0] = Node('RelExp', children = [p[1], Node(p[2]), p[3]])
 
 def p_error(p):
 	print(p)
