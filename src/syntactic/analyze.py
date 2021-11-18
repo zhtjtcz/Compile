@@ -154,7 +154,7 @@ def p_Stmt(p):
 	'''
 	if len(p) == 2:
 		p[0] = Node('Stmt')
-		if p[1].type == 'Block':
+		if p[1] !=';' and p[1].type == 'Block':
 			p[0].children = p[1:]
 	elif len(p) == 3:
 		p[0] = Node('Stmt', children = [p[1]])
