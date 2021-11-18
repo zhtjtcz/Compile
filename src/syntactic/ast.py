@@ -317,7 +317,20 @@ def stmt(x : Node):
 	# Block;
 
 	if len(x.children) == 2 and x.children[0].type == 'Cond':
-		#TODO add while
+		Check = table.create_flag()
+		Do = table.create_flag()
+		Next  = table.create_flag()
+
+		print("br label %s"%(Check), file = outputFile)
+		print(Check[1:] + ':', file = outputFile)
+		cond(x.children[0])
+		print("br i1 %s, label %s, label %s"%(x.children[0].name, Do, Next), file = outputFile)
+
+		print(Do[1:] + ':', file = outputFile)
+		stmt(x.children[1])
+		print("br label %s"%(Check), file = outputFile)
+		
+		print(Next[1:] + ':', file = outputFile)
 		return
 	# While (Cond) Stmt;
 

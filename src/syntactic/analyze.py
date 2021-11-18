@@ -163,7 +163,7 @@ def p_Stmt(p):
 	elif len(p) == 5:
 		p[0] = Node('Stmt', children = [p[1], Node('Equal'), p[3]])
 	elif len(p)==6:
-		if p[1] == 'While':
+		if p[1] == 'while':
 			p[0] = Node('Stmt', children = [p[3], p[5]])
 		else:
 			p[0] = Node('Stmt', children = [p[3], p[5], Node('('), Node(')')])
