@@ -115,20 +115,16 @@ def vardef(x : Node):
 
 def constdef(x : Node):
 	val = x.children[0]
-	if len(x.children) == 1:
-		val.add = table.create_val(val.name)
-		# TODO delete
-	else:
-		val.add = table.create_val(val.name)
-		checkCanCal(x.children[1].children[0])
-		exp(x.children[1].children[0].children[0])
-		s = x.children[1].children[0].children[0]
-		# s -> Addexp
-		print('store i32', s.name, ', i32*', val.add, file = outputFile)
-		table.create_reg(val.name)
-		table.insert_const(val.name)
-		print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
-		# Load it when create it
+	val.add = table.create_val(val.name)
+	checkCanCal(x.children[1].children[0])
+	exp(x.children[1].children[0].children[0])
+	s = x.children[1].children[0].children[0]
+	# s -> Addexp
+	print('store i32', s.name, ', i32*', val.add, file = outputFile)
+	table.create_reg(val.name)
+	table.insert_const(val.name)
+	print('%s = load i32, i32* %s'%(table.get_reg(val.name), val.add), file = outputFile)
+	# Load it when create it
 
 def vardecl(x : Node):
 	for i in x.children:
