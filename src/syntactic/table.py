@@ -58,6 +58,15 @@ class Table():
 		else:
 			return self.find_val_name(x.fa, name)
 		# Find a val name in the block-tree
+	
+	def find_const_name(self, x : BlockTree, name):
+		if x == None:
+			return None
+		if name in x.const.keys():
+			return x
+		else:
+			return self.find_const_name(x.fa, name)
+		# Find a const name in the block-tree
 
 	def get_val(self, name = None):
 		if name == None:
@@ -89,3 +98,4 @@ class Table():
 		self.tree = self.tree.fa
 
 table = Table()
+globals = {}
