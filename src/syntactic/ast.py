@@ -101,10 +101,8 @@ def checkCanCal(x : Node):
 
 def vardef(x : Node):
 	val = x.children[0]
-	if len(x.children) == 1:
-		val.add = table.create_val(val.name)
-	else:
-		val.add = table.create_val(val.name)
+	val.add = table.create_val(val.name)
+	if len(x.children) > 1:
 		exp(x.children[1].children[0])
 		s = x.children[1].children[0]
 		# s -> Exp
@@ -184,7 +182,7 @@ def globalConst(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
 	name = '@' + x.children[0].name
-	checkCanCal(x.children[1].children[0])
+	# checkCanCal(x.children[1].children[0])
 	val = globalCal(x.children[1].children[0].children[0])
 	print("%s = dso_local constant i32 %d"%(name, val), file = outputFile)
 	globals[x.children[0].name] = val
