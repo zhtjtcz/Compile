@@ -1,12 +1,10 @@
 from values import *
 import lexical.laxer
-import tool
 import syntactic.analyze
 from syntactic.ast import dfs
 
 def main():
 	input = inputfile.read() + '\n'
-	input = tool.remove(input)
 	print(input)
 	print('declare i32 @getint()', file = outputFile)
 	print('declare void @putint(i32)', file = outputFile)

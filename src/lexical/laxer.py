@@ -41,6 +41,11 @@ def t_newline(t):
 	r'\n+'
 	t.lexer.lineno += len(t.value)
 
+def t_annotation(t):
+	r'(/\*(.|\n)*?\*/)|(\/\/.*)'
+	t.lexer.lineno += t.value.count('\n')
+	pass
+
 def t_error(t):
 	print("Illegal character '%s'" % t.value[0])
 	exit(1)
