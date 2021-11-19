@@ -89,16 +89,6 @@ def exp(x : Node):
 		for i in x.children:
 			exp(i)
 
-def checkCanCal(x : Node):
-	if x == None:
-		return
-	if x.type == 'PrimaryExp' and x.children[0].type == 'LVal':
-		if table.find_const_name(table.tree, x.children[0].name) == None:
-			exit(1)
-		# Calculate the value using no const val
-	for i in x.children:
-		checkCanCal(i)
-
 def vardef(x : Node):
 	val = x.children[0]
 	val.add = table.create_val(val.name)
@@ -112,7 +102,6 @@ def vardef(x : Node):
 def constdef(x : Node):
 	val = x.children[0]
 	val.add = table.create_val(val.name)
-	checkCanCal(x.children[1].children[0])
 	exp(x.children[1].children[0].children[0])
 	s = x.children[1].children[0].children[0]
 	# s -> Addexp
@@ -196,7 +185,6 @@ def globalVal(x : Node):
 	table.tree.table[x.children[0].name] = name
 	val = 0
 	if len(x.children) != 1:
-		checkCanCal(x.children[1].children[0])
 		val = globalCal(x.children[1].children[0].children[0])
 	print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
 	globals[x.children[0].name] = val
