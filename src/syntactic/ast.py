@@ -214,9 +214,6 @@ def blockItems(x : Node):
 		else:
 			stmt(i)
 
-def block(x : Node):
-	blockItems(x.children[0])
-
 def decl(x : Node):
 	if x.children[0].type == 'ConstDecl':
 		constdecl(x.children[0])
@@ -314,7 +311,7 @@ def stmt(x : Node):
 
 	if len(x.children) == 1 and x.children[0].type == 'Block':
 		table.into_block()
-		block(x.children[0])
+		blockItems(x.children[0].children[0])
 		table.out_block()
 		return
 	# Block;
@@ -404,7 +401,7 @@ def dfs(x : Node):
 		# TODO check the ident -> lab x
 	elif x.type == 'Block':
 		table.into_block()
-		block(x)
+		blockItems(x.children[0])
 		table.out_block()
 	else:
 		print("Some error!")
