@@ -222,48 +222,42 @@ def decl(x : Node):
 
 def logicExp(x : Node):
 	if x.type == 'LOrExp':
+		logicExp(x.children[0])
 		if len(x.children) == 1:
-			logicExp(x.children[0])
 			x.name = x.children[0].name
 		else:
-			logicExp(x.children[0])
 			logicExp(x.children[1])
 			x.name = table.create_val()
 			print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			# x must be i32!
 	elif x.type == 'LAndExp':
+		logicExp(x.children[0])
 		if len(x.children) == 1:
-			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
 			if x.isBool == True:
 				transBooltoInt(x)
 		else:
-			logicExp(x.children[0])
 			logicExp(x.children[1])
-			if x.children[0].isBool == True:
-				transBooltoInt(x.children[0])
-			if x.children[1].isBool == True:
-				transBooltoInt(x.children[1])
+			for i in range(2):
+				if x.children[i].isBool == True:
+					transBooltoInt(x.children[i])
 			x.name = table.create_val()
 			print(x.children[0].name, x.children[0].isBool, x.children[1].isBool)
 			print("%s = and i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			x.isBool = False
 			# x must be i32!
 	elif x.type == 'EqExp':
+		logicExp(x.children[0])
 		if len(x.children) == 1:
-			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
 		else:
 			x.name = table.create_val()
-			logicExp(x.children[0])
 			logicExp(x.children[2])
-			if x.children[0].isBool == True:
-				transBooltoInt(x.children[0])
-			if x.children[2].isBool == True:
-				transBooltoInt(x.children[2])
-
+			for i in range(0,4,2):
+				if x.children[i].isBool == True:
+					transBooltoInt(x.children[i])
 			if x.children[1].type == '==':
 				print("%s = icmp eq i32 %s, %s"%(x.name, x.children[0].name, x.children[2].name), file = outputFile)
 			elif x.children[1].type == '!=':
