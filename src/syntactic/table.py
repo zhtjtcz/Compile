@@ -87,9 +87,6 @@ class Table():
 
 	def into_block(self):
 		node = BlockTree()
-		node.table = {}
-		node.reg = {}
-		node.const = {}
 		node.fa = self.tree
 		# Must be shallow copy!
 		self.tree = node
