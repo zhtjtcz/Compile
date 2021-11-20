@@ -52,14 +52,51 @@ def p_BType(p):
 def p_ConstDef(p):
 	'''
 	ConstDef : Ident Equal ConstInitVal
+			 | Ident ConstSubs Equal ConstInitVals
 	'''
-	p[0] = Node('ConstDef', children = [Node('Ident', name = p[1]), p[3]])
+	if len(p) == 4:
+		p[0] = Node('ConstDef', children = [Node('Ident', name = p[1]), p[3]])
+	else:
+		p[0] = Node('ConstDef', children = [Node('Ident', name = p[1]), p[2], p[4]])
+
+def p_ConstSubs(p):
+	'''
+	ConstSubs : ConstSub ConstSubs
+			  | ConstSub
+	'''
+	if len(p) == 2:
+		p[0] = Node('ConstSubs', children = [p[1]])
+	else:
+		p[0] = Node('ConstSubs', children = [p[1]] + p[2].children)
+
+def p_ConstSub(p):
+	'''
+	ConstSub : LSPar ConstExp RSPar
+	'''
+	p[0] = Node('ConstSub', children = [p[2]])
 
 def p_ConstInitVal(p):
 	'''
 	ConstInitVal : ConstExp
+				 | LBrace RBrace
+				 | LBrace ConstInitVals RBrace
 	'''
-	p[0] = Node('ConstInitVal', children = p[1:])
+	if len(p) == 2:
+		p[0] = Node('ConstInitVal', children = p[1:])
+	elif len(p) == 3:
+		p[0] = Node('ConstInitVal')
+	else:
+		p[0] = Node('ConstInitVal', children = [Node('{'), p[2], Node('}')])
+
+def p_ConstInitVals(p):
+	'''
+	ConstInitVals : ConstInitVal
+				  | ConstInitVals Comma ConstInitVal
+	'''
+	if len(p) == 2:
+		p[0] = Node('ConstInitVals', children = [p[1]])
+	else:
+		p[0] = Node('ConstInitVals', children = p[1].children + [p[3]])
 
 def p_ConstExp(p):
 	'''
@@ -85,14 +122,20 @@ def p_Vardefs(p):
 
 def p_VarDef(p):
 	'''
-	VarDef : Ident Equal InitVal
-           | Ident
+	VarDef : Ident
+		   | Ident ConstSubs
+           | Ident Equal InitVal
+		   | Ident ConstSubs Equal ConstInitVals
 	'''
 	x = Node("Ident", name = p[1])
 	if len(p) == 2:
 		p[0] = Node("VarDef", children = [x])
-	else:
+	elif len(p) == 3:
+		p[0] = Node('VarDef', children = [x, p[2]])
+	elif len(p) == 4:
 		p[0] = Node('VarDef', children = [x, p[3]])
+	else:
+		p[0] = Node('VarDef', children = [x, p[2], p[4]])
 
 def p_InitVal(p):
 	'''
@@ -179,8 +222,12 @@ def p_Stmt(p):
 def p_LVal(p):
 	'''
 	LVal : Ident
+		 | Ident ConstSubs
 	'''
-	p[0] = Node('LVal', name = p[1])
+	if len(p) == 2:
+		p[0] = Node('LVal', name = p[1])
+	else:
+		p[0] = Node('LVal', name = p[1], children = [p[2]])
 
 def p_Exp(p):
 	'''
