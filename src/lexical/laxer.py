@@ -20,6 +20,7 @@ tokens = [
 	'Plus', 'Minus', 'Times', 'Div', 'Mod',
 	'Comma', 'Equal',
 	'Not', 'Less', 'More', 'Leq', 'Geq', 'Deq', 'Neq', 'And', 'Or',
+	'LSPar', 'RSPar',
 ] + list(reserved.values())
 
 def t_Number(t):
@@ -73,6 +74,8 @@ def getLexer():
 	t_Neq = r'\!='
 	t_And = r'\&\&'
 	t_Or = r'\|\|'
+	t_LSPar = r'\['
+	t_RSPar = r'\]'
 
 	lexer = lex.lex()
 	return lexer
