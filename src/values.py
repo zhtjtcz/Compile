@@ -10,7 +10,7 @@ elif 'USER' in os.environ.keys():
 
 if LOCAL:
 	inputfile = open('a.c', 'r')
-	outputFile = open('test.out', 'w')
+	outputFile = open('test.ll', 'w')
 else:
 	inputfile = open(sys.argv[1], 'r')
 	outputFile = open(sys.argv[2], 'w')

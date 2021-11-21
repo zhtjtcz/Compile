@@ -129,7 +129,7 @@ def constdecl(x : Node):
 		constdef(i)
 
 def globalCal(x : Node):
-	if x.type == 'Exp':
+	if x.type == 'Exp' or x.type == 'ConstExp':
 		return globalCal(x.children[0])
 	elif x.type == 'AddExp':
 		if len(x.children) == 1:
@@ -173,20 +173,71 @@ def globalCal(x : Node):
 					exit(1)
 				return globals[x.children[0].name]
 				# Val
+				# TODO array
 		else:
 			return globalCal(x.children[1])
 	elif x.type == 'FuncRParams':
 		exit(1)
 
+def arrayOut(s):
+	out = 'i32'
+	for i in range(len(s)-1, -1, -1):
+		out = '[' + str(s[i]) + ' x ' + out + ']'
+	return out
+
+def initValue(x : Node):
+	if x.type == 'ConstInitVals':
+		return ','.join([initValue(x.children[i]) for i in range(len(x.children))])
+	elif x.type == 'ConstInitVal':
+		if len(x.children) == 0:
+			return '[]'
+		elif len(x.children) == 1:
+			return str(globalCal(x.children[0]))
+		else:
+			return '[' + str(initValue(x.children[1])) + ']'
+
+def initArray(size, value):
+	if len(size) == 2:
+		while len(value) < size[0]:
+			a = [0 for i in range(size[1])]
+			value.append(a.copy())
+	if len(size) == 1:
+		while len(value) < size[0]:
+			value.append(0)
+		print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
+	else:
+		print('[', file = outputFile, end =' ')
+		for i in range(len(value)):
+			print(arrayOut(size[1:]), file = outputFile, end =' ')
+			initArray(size[1:], value[i])
+			if i != len(value) - 1:
+				print(file = outputFile, end =', ')
+		print(']', file = outputFile, end =' ')
+
 def globalConst(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
 	name = '@' + x.children[0].name
-	val = globalCal(x.children[1].children[0].children[0])
-	print("%s = dso_local constant i32 %d"%(name, val), file = outputFile)
-	globals[x.children[0].name] = val
-	table.tree.const[x.children[0].name] = True
-	table.tree.table[x.children[0].name] = name
+	if len(x.children) == 2:
+		val = globalCal(x.children[1].children[0].children[0])
+		print("%s = dso_local constant i32 %d"%(name, val), file = outputFile)
+		globals[x.children[0].name] = val
+		table.tree.const[x.children[0].name] = True
+		table.tree.table[x.children[0].name] = name
+		# Const global Val
+	else:
+		size = [globalCal(i) for i in x.children[1].children]
+		print(size)
+		print('%s = dso_local constant %s'%(name, arrayOut(size)), file = outputFile, end = '')
+		value = eval(initValue(x.children[2]))
+		if value == []:
+			value = [0 for i in range(size[-1])]
+			for i in range(len(size)-2, -1, -1):
+				value = [value.copy() for j in range(size[i])]
+		initArray(size, value)
+		print(file = outputFile)
+		table.tree.array[x.children[0].name] = (name, size, value)
+		# Const global array
 
 def globalVal(x : Node):
 	if x.children[0].name in table.tree.table.keys():

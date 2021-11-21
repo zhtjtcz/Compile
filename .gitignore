@@ -10,3 +10,4 @@ test.in
 test.out
 *.ll
 a.c
+test.ll

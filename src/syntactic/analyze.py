@@ -65,15 +65,15 @@ def p_ConstSubs(p):
 			  | ConstSub
 	'''
 	if len(p) == 2:
-		p[0] = Node('ConstSubs', children = [p[1]])
+		p[0] = Node('ConstSubs', children = [p[1].children[0]])
 	else:
-		p[0] = Node('ConstSubs', children = [p[1]] + p[2].children)
+		p[0] = Node('ConstSubs', children = [p[1].children[0]] + p[2].children)
 
 def p_ConstSub(p):
 	'''
 	ConstSub : LSPar ConstExp RSPar
 	'''
-	p[0] = Node('ConstSub', children = [p[2]])
+	p[0] = Node('ConstSub', children = [p[2].children[0]])
 
 def p_ConstInitVal(p):
 	'''
@@ -91,12 +91,12 @@ def p_ConstInitVal(p):
 def p_ConstInitVals(p):
 	'''
 	ConstInitVals : ConstInitVal
-				  | ConstInitVals Comma ConstInitVal
+				  | ConstInitVal Comma ConstInitVals
 	'''
 	if len(p) == 2:
 		p[0] = Node('ConstInitVals', children = [p[1]])
 	else:
-		p[0] = Node('ConstInitVals', children = p[1].children + [p[3]])
+		p[0] = Node('ConstInitVals', children = [p[1], p[3]])
 
 def p_ConstExp(p):
 	'''
