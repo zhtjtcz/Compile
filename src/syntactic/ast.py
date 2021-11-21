@@ -214,6 +214,21 @@ def initArray(size, value):
 				print(file = outputFile, end =', ')
 		print(']', file = outputFile, end =' ')
 
+def globalArray(x : Node):
+	name = '@' + x.children[0].name
+	size = [globalCal(i) for i in x.children[1].children]
+	print(size)
+	print('%s = dso_local global %s'%(name, arrayOut(size)), file = outputFile, end = '')
+	value = eval(initValue(x.children[2]))
+	if value == []:
+		value = [0 for i in range(size[-1])]
+		for i in range(len(size)-2, -1, -1):
+			value = [value.copy() for j in range(size[i])]
+	initArray(size, value)
+	print(file = outputFile)
+	table.tree.array[x.children[0].name] = (name, size, value)
+	# Const global array
+
 def globalConst(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
@@ -226,29 +241,21 @@ def globalConst(x : Node):
 		table.tree.table[x.children[0].name] = name
 		# Const global Val
 	else:
-		size = [globalCal(i) for i in x.children[1].children]
-		print(size)
-		print('%s = dso_local constant %s'%(name, arrayOut(size)), file = outputFile, end = '')
-		value = eval(initValue(x.children[2]))
-		if value == []:
-			value = [0 for i in range(size[-1])]
-			for i in range(len(size)-2, -1, -1):
-				value = [value.copy() for j in range(size[i])]
-		initArray(size, value)
-		print(file = outputFile)
-		table.tree.array[x.children[0].name] = (name, size, value)
-		# Const global array
+		globalArray(x)
 
 def globalVal(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
 	name = '@' + x.children[0].name	
-	table.tree.table[x.children[0].name] = name
-	val = 0
-	if len(x.children) != 1:
-		val = globalCal(x.children[1].children[0].children[0])
-	print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
-	globals[x.children[0].name] = val
+	if len(x.children) == 2:
+		table.tree.table[x.children[0].name] = name
+		val = 0
+		if len(x.children) != 1:
+			val = globalCal(x.children[1].children[0].children[0])
+		print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
+		globals[x.children[0].name] = val
+	else:
+		globalArray(x)
 
 def globalDefine(x : Node):
 	for i in x.children[0].children:
