@@ -422,6 +422,8 @@ def stmt(x : Node):
 		val = x.children[0]
 		if table.find_val_name(table.tree, val.name) == None:
 			exit(1)
+		if table.find_const_name(table.tree, val.name) != None:
+			exit(1)
 		# Can't find the value
 		exp(x.children[2])
 		node = table.find_val_name(table.tree, val.name)
