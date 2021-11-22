@@ -14,6 +14,13 @@ def transBooltoInt(x : Node):
 	x.name = s
 	x.isBool = False
 
+def getPos(x : Node):
+	size = []
+	for i in x.children:
+		exp(i)
+		size.append(i.name)
+	return size
+
 def exp(x : Node):
 	if x.type == 'Exp' or x.type == 'ConstExp':
 		exp(x.children[0])
@@ -78,11 +85,23 @@ def exp(x : Node):
 				x.name = table.create_val()
 				print(x.name, '= add i32', '0 ,', str(x.children[0].value), file = outputFile)
 			else:
-				table.create_reg(x.children[0].name)
-				node = table.find_val_name(table.tree, x.children[0].name)
-				print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
-				x.name = table.get_reg(x.children[0].name)
-				# Val
+				if len(x.children[0].children) == 0:
+					table.create_reg(x.children[0].name)
+					node = table.find_val_name(table.tree, x.children[0].name)
+					print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
+					x.name = table.get_reg(x.children[0].name)
+					# LVal
+				else:
+					node = table.find_array_name(table.tree, x.children[0].name)
+					pos = getPos(x.children[0].children[0])
+					new = table.create_val()
+					out = node.array[x.children[0].name][1]
+					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], posOut([0] + pos)),
+						file = outputFile)
+					__new = table.create_val()
+					print("%s = load i32, i32* %s"%(__new, new), file = outputFile)
+					x.name = __new
+					# Array
 		else:
 			exp(x.children[1])
 			x.name = x.children[1].name
@@ -136,7 +155,7 @@ def initValue(x : Node):
 			return '[' + str(initValue(x.children[1])) + ']'
 
 def posOut(pos : list):
-	a = ['i64 ' + str(i) for i in pos]
+	a = ['i32 ' + str(i) for i in pos]
 	return ', '.join(a)
 
 def fillArray(name, size, value, pos, out):
@@ -159,7 +178,7 @@ def vardef(x : Node):
 		if val.name in table.tree.array.keys() or val.name in table.tree.const_array.keys():
 			exit(1)
 		size = [globalCal(i) for i in x.children[1].children]
-		name = table.create_array(val, arrayOut(size), False)
+		name = table.create_array(val.name, arrayOut(size), False)
 		if len(x.children) == 3:
 			value = eval(initValue(x.children[2]))
 			appendArray(size, value)
@@ -183,7 +202,7 @@ def constdef(x : Node):
 		size = [globalCal(i) for i in x.children[1].children]
 		value = eval(initValue(x.children[2]))
 		appendArray(size, value)
-		name = table.create_array(val, arrayOut(size), True, value)
+		name = table.create_array(val.name, arrayOut(size), True, value)
 		fillArray(name, size, value, [0], arrayOut(size))
 	else:
 		val.add = table.create_val(val.name)

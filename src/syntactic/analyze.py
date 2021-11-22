@@ -221,8 +221,8 @@ def p_Stmt(p):
 
 def p_LVal(p):
 	'''
-	LVal : Ident
-		 | Ident ConstSubs
+	LVal : Ident ConstSubs
+		 | Ident
 	'''
 	if len(p) == 2:
 		p[0] = Node('LVal', name = p[1])
@@ -306,7 +306,7 @@ def p_PrimaryExp(p):
 			x = Node('Number', value = int(p[1]))
 			p[0] = Node('PrimaryExp', children = [x])
 		else:
-			x = Node('LVal', name = p[1].name)
+			x = Node('LVal', name = p[1].name, children = p[1].children)
 			p[0] = Node('PrimaryExp', children = [x])
 	else:
 		p[0] = Node('PrimaryExp', children = [Node('('), p[2], Node(')')])

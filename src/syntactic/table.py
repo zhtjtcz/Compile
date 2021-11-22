@@ -38,10 +38,9 @@ class Table():
 			s = '%x' + str(self.id)
 			self.id += 1
 			print("%s = alloca %s"%(s, size), file = outputFile)
-			if const == False:
-				self.tree.array[name] = s
-			else:
-				self.tree.const_array[name] = (s, value)
+			self.tree.array[name] = (s, size)
+			if const == True:
+				self.tree.const_array[name] = (s, size, value)
 			return s
 
 	def create_reg(self, name = None):
@@ -82,6 +81,14 @@ class Table():
 		else:
 			return self.find_const_name(x.fa, name)
 		# Find a const name in the block-tree
+	
+	def find_array_name(self, x : BlockTree, name):
+		if x == None:
+			return None
+		if name in x.array.keys():
+			return x
+		else:
+			return self.find_array_name(x.fa, name)
 
 	def get_val(self, name = None):
 		if name == None:
