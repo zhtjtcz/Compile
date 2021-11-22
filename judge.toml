@@ -1,4 +1,4 @@
-[jobs.lab7]
+[jobs.lab3]
 
 image = { source = "dockerfile", path = ".", tag = "Hello the Compile!" }
 
