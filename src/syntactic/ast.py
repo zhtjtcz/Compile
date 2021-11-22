@@ -274,7 +274,10 @@ def globalCal(x : Node):
 
 def initArray(size, value):
 	if len(size) == 1:
-		print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
+		if value.count(0) == len(value) and len(value) > 100:
+			print("zeroinitializer", file = outputFile, end = '')
+		else:
+			print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
 	else:
 		print('[', file = outputFile, end =' ')
 		for i in range(len(value)):
@@ -287,7 +290,7 @@ def initArray(size, value):
 def globalArray(x : Node):
 	name = '@' + x.children[0].name
 	size = [globalCal(i) for i in x.children[1].children]
-	print('%s = dso_local global %s'%(name, arrayOut(size)), file = outputFile, end = '')
+	print('%s = dso_local global %s'%(name, arrayOut(size)), file = outputFile, end = ' ')
 	if len(x.children) == 3:
 		value = eval(initValue(x.children[2]))
 	else:
