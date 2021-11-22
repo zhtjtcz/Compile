@@ -15,7 +15,7 @@ def transBooltoInt(x : Node):
 	x.isBool = False
 
 def exp(x : Node):
-	if x.type == 'Exp':
+	if x.type == 'Exp' or x.type == 'ConstExp':
 		exp(x.children[0])
 		x.name = x.children[0].name
 	elif x.type == 'AddExp':
@@ -99,15 +99,52 @@ def checkCanCal(x : Node):
 	for i in x.children:
 		checkCanCal(i)
 
+def appendArray(size, value):
+	if len(size) == 2:
+		while len(value) < size[0]:
+			value.append([0 for i in range(size[1])].copy())
+	if len(size) == 1:
+		while len(value) < size[0]:
+			value.append(0)
+	else:
+		for i in range(len(value)):
+			appendArray(size[1:], value[i])
+
+def initValue(x : Node):
+	if x.type == 'ConstInitVals':
+		return ','.join([initValue(x.children[i]) for i in range(len(x.children))])
+	elif x.type == 'ConstInitVal':
+		if len(x.children) == 0:
+			return '[]'
+		elif len(x.children) == 1:
+			if table.tree.fa == None:
+				return str(globalCal(x.children[0]))
+				# Golbal
+			else:
+				exp(x.children[0])
+				s = x.children[0].name
+				return s[2:] if s[0] == '%' else s
+				# Value
+		else:
+			return '[' + str(initValue(x.children[1])) + ']'
+
 def vardef(x : Node):
 	val = x.children[0]
-	val.add = table.create_val(val.name)
-	if len(x.children) > 1:
-		exp(x.children[1].children[0])
-		s = x.children[1].children[0]
-		# s -> Exp
-		print('store i32', s.name, ', i32*', val.add, file = outputFile)
-		table.create_reg(val.name)
+	if (len(x.children) == 2 and x.children[1].type == 'ConstSubs') or len(x.children) == 3:
+		size = [globalCal(i) for i in x.children[1].children]
+		table.create_array(val, size, False)
+		if len(x.children) == 3:
+			value = initValue(x.children[2])
+			print(value)
+			# TODO finish it
+	else:
+		val.add = table.create_val(val.name)
+		if len(x.children) > 1:
+			exp(x.children[1].children[0])
+			s = x.children[1].children[0]
+			# s -> Exp
+			print('store i32', s.name, ', i32*', val.add, file = outputFile)
+			table.create_reg(val.name)
 
 def constdef(x : Node):
 	val = x.children[0]
@@ -185,25 +222,8 @@ def arrayOut(s):
 		out = '[' + str(s[i]) + ' x ' + out + ']'
 	return out
 
-def initValue(x : Node):
-	if x.type == 'ConstInitVals':
-		return ','.join([initValue(x.children[i]) for i in range(len(x.children))])
-	elif x.type == 'ConstInitVal':
-		if len(x.children) == 0:
-			return '[]'
-		elif len(x.children) == 1:
-			return str(globalCal(x.children[0]))
-		else:
-			return '[' + str(initValue(x.children[1])) + ']'
-
 def initArray(size, value):
-	if len(size) == 2:
-		while len(value) < size[0]:
-			a = [0 for i in range(size[1])]
-			value.append(a.copy())
 	if len(size) == 1:
-		while len(value) < size[0]:
-			value.append(0)
 		print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
 	else:
 		print('[', file = outputFile, end =' ')
@@ -217,13 +237,13 @@ def initArray(size, value):
 def globalArray(x : Node):
 	name = '@' + x.children[0].name
 	size = [globalCal(i) for i in x.children[1].children]
-	print(size)
 	print('%s = dso_local global %s'%(name, arrayOut(size)), file = outputFile, end = '')
 	value = eval(initValue(x.children[2]))
 	if value == []:
 		value = [0 for i in range(size[-1])]
 		for i in range(len(size)-2, -1, -1):
 			value = [value.copy() for j in range(size[i])]
+	appendArray(size, value)
 	initArray(size, value)
 	print(file = outputFile)
 	table.tree.array[x.children[0].name] = (name, size, value)
@@ -246,7 +266,7 @@ def globalConst(x : Node):
 def globalVal(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
-	name = '@' + x.children[0].name	
+	name = '@' + x.children[0].name
 	if len(x.children) == 2:
 		table.tree.table[x.children[0].name] = name
 		val = 0
@@ -255,6 +275,8 @@ def globalVal(x : Node):
 		print("%s = dso_local global i32 %d"%(name, val), file = outputFile)
 		globals[x.children[0].name] = val
 	else:
+		if x.children[0].name in table.tree.array.keys() or x.children[0].name in table.tree.const_array.keys():
+			exit(1)
 		globalArray(x)
 
 def globalDefine(x : Node):

@@ -7,6 +7,7 @@ class BlockTree():
 		self.reg = {}
 		self.const = {}
 		self.array = {}
+		self.const_array = {}
 
 class Table():
 	def __init__(self):
@@ -20,7 +21,7 @@ class Table():
 			return s
 			# Simply exp or caclulation result
 		else:
-			if name in self.tree.table.keys() or name in self.tree.array.keys():
+			if name in self.tree.table.keys() or name in self.tree.array.keys() or name in self.tree.const_array.keys():
 				exit(1)
 			else:
 				s = '%x' + str(self.id)
@@ -30,12 +31,17 @@ class Table():
 				return s
 				# Ident
 	
-	def create_array(self, name):
-		if name in self.tree.table.keys() or name in self.tree.array.keys():
+	def create_array(self, name, size, const = False):
+		if name in self.tree.table.keys() or name in self.tree.array.keys() or name in self.tree.const_array.keys():
 			exit(1)
 		else:
-			# TODO create new array
-			pass
+			s = '%x' + str(self.id)
+			self.id += 1
+			print("%s = alloca %s"%(s, size), file = outputFile)
+			if const == False:
+				self.tree.array[name] = s
+			else:
+				self.tree.const_array[name] = s
 
 	def create_reg(self, name = None):
 		if name == None or self.find_val_name(self.tree, name) == None:
