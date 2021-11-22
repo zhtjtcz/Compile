@@ -100,6 +100,12 @@ def checkCanCal(x : Node):
 	for i in x.children:
 		checkCanCal(i)
 
+def arrayOut(s):
+	out = 'i32'
+	for i in range(len(s)-1, -1, -1):
+		out = '[' + str(s[i]) + ' x ' + out + ']'
+	return out
+
 def appendArray(size, value):
 	if len(size) == 2:
 		while len(value) < size[0]:
@@ -133,7 +139,7 @@ def vardef(x : Node):
 	val = x.children[0]
 	if (len(x.children) == 2 and x.children[1].type == 'ConstSubs') or len(x.children) == 3:
 		size = [globalCal(i) for i in x.children[1].children]
-		table.create_array(val, size, False)
+		table.create_array(val, arrayOut(size), False)
 		if len(x.children) == 3:
 			value = initValue(x.children[2])
 			print(value)
@@ -151,12 +157,11 @@ def constdef(x : Node):
 	val = x.children[0]
 	val.add = table.create_val(val.name)
 	checkCanCal(x.children[1].children[0])
-	exp(x.children[1].children[0].children[0])
-	s = x.children[1].children[0].children[0]
+	value = globalCal(x.children[1].children[0].children[0])
 	# s -> Addexp
-	print('store i32', s.name, ', i32*', val.add, file = outputFile)
+	print('store i32', value, ', i32*', val.add, file = outputFile)
 	table.create_reg(val.name)
-	table.insert_const(val.name)
+	table.insert_const(val.name, value)
 
 def vardecl(x : Node):
 	for i in x.children:
@@ -207,21 +212,16 @@ def globalCal(x : Node):
 			if x.children[0].type == 'Number':
 				return int(str(x.children[0].value))
 			else:
-				if x.children[0].name not in table.tree.const.keys():
+				if table.find_const_name(table.tree, x.children[0].name) == None:
 					exit(1)
-				return globals[x.children[0].name]
+				node = table.find_const_name(table.tree, x.children[0].name)
+				return node.const[x.children[0].name]
 				# Val
 				# TODO array
 		else:
 			return globalCal(x.children[1])
 	elif x.type == 'FuncRParams':
 		exit(1)
-
-def arrayOut(s):
-	out = 'i32'
-	for i in range(len(s)-1, -1, -1):
-		out = '[' + str(s[i]) + ' x ' + out + ']'
-	return out
 
 def initArray(size, value):
 	if len(size) == 1:
@@ -258,7 +258,7 @@ def globalConst(x : Node):
 		val = globalCal(x.children[1].children[0].children[0])
 		print("%s = dso_local constant i32 %d"%(name, val), file = outputFile)
 		globals[x.children[0].name] = val
-		table.tree.const[x.children[0].name] = True
+		table.tree.const[x.children[0].name] = val
 		table.tree.table[x.children[0].name] = name
 		# Const global Val
 	else:

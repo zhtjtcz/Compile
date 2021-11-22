@@ -59,10 +59,10 @@ class Table():
 		return s
 	# Goto flag
 
-	def insert_const(self, name = None):
+	def insert_const(self, name = None, value = 0):
 		if name == None or name in self.tree.const.keys():
 			exit(1)
-		self.tree.const[name] = True
+		self.tree.const[name] = value
 
 	def find_val_name(self, x : BlockTree, name):
 		if x == None:
