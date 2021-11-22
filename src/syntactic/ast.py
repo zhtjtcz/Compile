@@ -300,7 +300,7 @@ def globalArray(x : Node):
 	appendArray(size, value)
 	initArray(size, value)
 	print(file = outputFile)
-	table.tree.array[x.children[0].name] = (name, size, value)
+	table.tree.array[x.children[0].name] = (name, arrayOut(size), value)
 	# Const global array
 
 def globalConst(x : Node):
@@ -482,6 +482,7 @@ def stmt(x : Node):
 		node = table.find_val_name(table.tree, val.name)
 		print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
 		return
+		# TODO add array
 	# LVal Equal Exp Semicolon
 
 	if len(x.children) == 4:
