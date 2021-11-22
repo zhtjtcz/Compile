@@ -135,6 +135,22 @@ def initValue(x : Node):
 		else:
 			return '[' + str(initValue(x.children[1])) + ']'
 
+def posOut(pos : list):
+	a = ['i64 ' + str(i) for i in pos]
+	return ', '.join(a)
+
+def fillArray(name, size, value, pos, out):
+	if len(size) == 1:
+		for i in range(size[0]):
+			if value[i]:
+				x = table.create_val()
+				print("%s = getelementptr inbounds %s, %s* %s, %s"%(x, out, out, name, posOut(pos + [i])), file = outputFile)
+				print("store i32 %%x%d, i32* %s"%(value[i], x), file = outputFile)
+		# Fill it
+	else:
+		for i in range(size[0]):
+			fillArray(name, size[1:], value[i], pos + [i], out)
+
 def vardef(x : Node):
 	val = x.children[0]
 	if (len(x.children) == 2 and x.children[1].type == 'ConstSubs') or len(x.children) == 3:
@@ -143,11 +159,11 @@ def vardef(x : Node):
 		if val.name in table.tree.array.keys() or val.name in table.tree.const_array.keys():
 			exit(1)
 		size = [globalCal(i) for i in x.children[1].children]
-		table.create_array(val, arrayOut(size), False)
+		name = table.create_array(val, arrayOut(size), False)
 		if len(x.children) == 3:
-			value = initValue(x.children[2])
-			print(value)
-			# TODO finish it
+			value = eval(initValue(x.children[2]))
+			appendArray(size, value)
+			fillArray(name, size, value, [0], arrayOut(size))
 	else:
 		val.add = table.create_val(val.name)
 		if len(x.children) > 1:
@@ -243,7 +259,10 @@ def globalArray(x : Node):
 	name = '@' + x.children[0].name
 	size = [globalCal(i) for i in x.children[1].children]
 	print('%s = dso_local global %s'%(name, arrayOut(size)), file = outputFile, end = '')
-	value = eval(initValue(x.children[2]))
+	if len(x.children) == 3:
+		value = eval(initValue(x.children[2]))
+	else:
+		value = []
 	if value == []:
 		value = [0 for i in range(size[-1])]
 		for i in range(len(size)-2, -1, -1):

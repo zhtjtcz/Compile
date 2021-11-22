@@ -42,6 +42,7 @@ class Table():
 				self.tree.array[name] = s
 			else:
 				self.tree.const_array[name] = s
+			return s
 
 	def create_reg(self, name = None):
 		if name == None or self.find_val_name(self.tree, name) == None:
