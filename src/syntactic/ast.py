@@ -138,6 +138,10 @@ def initValue(x : Node):
 def vardef(x : Node):
 	val = x.children[0]
 	if (len(x.children) == 2 and x.children[1].type == 'ConstSubs') or len(x.children) == 3:
+		if val.name in table.tree.table.keys() or val.name in table.tree.const.keys():
+			exit(1)
+		if val.name in table.tree.array.keys() or val.name in table.tree.const_array.keys():
+			exit(1)
 		size = [globalCal(i) for i in x.children[1].children]
 		table.create_array(val, arrayOut(size), False)
 		if len(x.children) == 3:
