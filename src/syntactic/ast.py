@@ -175,13 +175,24 @@ def vardef(x : Node):
 
 def constdef(x : Node):
 	val = x.children[0]
-	val.add = table.create_val(val.name)
-	checkCanCal(x.children[1].children[0])
-	value = globalCal(x.children[1].children[0].children[0])
-	# s -> Addexp
-	print('store i32', value, ', i32*', val.add, file = outputFile)
-	table.create_reg(val.name)
-	table.insert_const(val.name, value)
+	if (len(x.children) == 2 and x.children[1].type == 'ConstSubs') or len(x.children) == 3:
+		if val.name in table.tree.table.keys() or val.name in table.tree.const.keys():
+			exit(1)
+		if val.name in table.tree.array.keys() or val.name in table.tree.const_array.keys():
+			exit(1)
+		size = [globalCal(i) for i in x.children[1].children]
+		value = eval(initValue(x.children[2]))
+		appendArray(size, value)
+		name = table.create_array(val, arrayOut(size), True, value)
+		fillArray(name, size, value, [0], arrayOut(size))
+	else:
+		val.add = table.create_val(val.name)
+		checkCanCal(x.children[1].children[0])
+		value = globalCal(x.children[1].children[0].children[0])
+		# s -> Addexp
+		print('store i32', value, ', i32*', val.add, file = outputFile)
+		table.create_reg(val.name)
+		table.insert_const(val.name, value)
 
 def vardecl(x : Node):
 	for i in x.children:

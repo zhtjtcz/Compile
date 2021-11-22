@@ -31,7 +31,7 @@ class Table():
 				return s
 				# Ident
 	
-	def create_array(self, name, size, const = False):
+	def create_array(self, name, size, const = False, value = None):
 		if name in self.tree.table.keys() or name in self.tree.array.keys() or name in self.tree.const_array.keys():
 			exit(1)
 		else:
@@ -41,7 +41,7 @@ class Table():
 			if const == False:
 				self.tree.array[name] = s
 			else:
-				self.tree.const_array[name] = s
+				self.tree.const_array[name] = (s, value)
 			return s
 
 	def create_reg(self, name = None):
