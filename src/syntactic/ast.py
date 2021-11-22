@@ -473,16 +473,28 @@ def stmt(x : Node):
 
 	if len(x.children) == 3:
 		val = x.children[0]
-		if table.find_val_name(table.tree, val.name) == None:
-			exit(1)
-		if table.find_const_name(table.tree, val.name) != None:
-			exit(1)
-		# Can't find the value
-		exp(x.children[2])
-		node = table.find_val_name(table.tree, val.name)
-		print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
-		return
-		# TODO add array
+		if len(x.children[0].children) == 0:
+			if table.find_val_name(table.tree, val.name) == None:
+				exit(1)
+			if table.find_const_name(table.tree, val.name) != None:
+				exit(1)
+			# Can't find the value
+			exp(x.children[2])
+			node = table.find_val_name(table.tree, val.name)
+			print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
+			return
+		else:
+			if table.find_array_name(table.tree, val.name) == None:
+				exit(1)
+			node = table.find_array_name(table.tree, val.name)
+			exp(x.children[2])
+
+			pos = getPos(val.children[0])
+			new = table.create_val()
+			out = node.array[val.name][1]
+			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], posOut([0] + pos)),
+				file = outputFile)
+			print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
 	# LVal Equal Exp Semicolon
 
 	if len(x.children) == 4:
