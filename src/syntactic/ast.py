@@ -228,8 +228,8 @@ def globalCal(x : Node):
 		if len(x.children) == 1:
 			return globalCal(x.children[0])
 		else:
-			a = globalCal(x.children[2])
-			b = globalCal(x.children[0])
+			a = globalCal(x.children[0])
+			b = globalCal(x.children[2])
 			return a+b if x.children[1].type == '+' else a-b
 	elif x.type == 'MulExp':
 		if len(x.children) == 1:
@@ -240,7 +240,7 @@ def globalCal(x : Node):
 			if x.children[1].type == '*':
 				return a*b
 			elif x.children[1].type == '/':
-				return a/b
+				return a//b
 			else:
 				return a%b
 	elif x.type == 'UnaryExp':
@@ -267,7 +267,6 @@ def globalCal(x : Node):
 				node = table.find_const_name(table.tree, x.children[0].name)
 				return node.const[x.children[0].name]
 				# Val
-				# TODO array
 		else:
 			return globalCal(x.children[1])
 	elif x.type == 'FuncRParams':
