@@ -268,7 +268,7 @@ def globalVal(x : Node):
 	if x.children[0].name in table.tree.table.keys():
 		exit(1)
 	name = '@' + x.children[0].name
-	if len(x.children) == 2:
+	if (len(x.children) == 2 and x.children[1].type == 'InitVal') or len(x.children) == 1:
 		table.tree.table[x.children[0].name] = name
 		val = 0
 		if len(x.children) != 1:
