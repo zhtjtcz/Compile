@@ -75,7 +75,8 @@ def exp(x : Node):
 	elif x.type == 'PrimaryExp':
 		if len(x.children) == 1:
 			if x.children[0].type == 'Number':
-				x.name = str(x.children[0].value)
+				x.name = table.create_val()
+				print(x.name, '= add i32', '0 ,', str(x.children[0].value), file = outputFile)
 			else:
 				table.create_reg(x.children[0].name)
 				node = table.find_val_name(table.tree, x.children[0].name)
