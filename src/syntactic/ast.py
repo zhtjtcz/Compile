@@ -379,7 +379,6 @@ def logicExp(x : Node):
 				if x.children[i].isBool == True:
 					transBooltoInt(x.children[i])
 			x.name = table.create_val()
-			print(x.children[0].name, x.children[0].isBool, x.children[1].isBool)
 			print("%s = and i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			x.isBool = False
 			# x must be i32!
