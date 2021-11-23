@@ -157,11 +157,41 @@ def p_InitVal(p):
 def p_Funcdef(p):
 	'''
 	FuncDef : BType Ident LPar RPar Block
+	        | BType Ident LPar FuncFParams RPar Block
 	'''
-	l = Node('LBrace')
-	r = Node('RBrace')
-	x = Node('Ident')
-	p[0] = Node('FuncDef', children = [p[1], x, l, r, p[5]])
+	x = Node('Ident', name = p[2])
+	if len(p) == 6:
+		p[0] = Node('FuncDef', children = [p[1], x, p[5]])
+	else:
+		p[0] = Node('FuncDef', children = [p[1], x, p[4], p[6]])
+
+def p_FuncFParams(p):
+	'''
+	FuncFParams : FuncFParam
+				| FuncFParam Comma FuncFParams
+	'''
+	if len(p) == 2:
+		p[0] = Node('FuncFParams', children = [p[1]])
+	else:
+		p[0] = Node('FuncFParams', children = [p[1]] + p[3].children)
+
+def p_FuncFParam(p):
+	'''
+	FuncFParam : BType Ident
+			   | BType Ident LSPar RSPar
+			   | BType Ident LSPar RSPar ParParams
+	'''
+	p[0] = Node('FuncFParam', p[1:])
+
+def p_ParParams(p):
+	'''
+	ParParams : LSPar Exp RSPar
+			  | LSPar Exp RSPar ParParams
+	'''
+	if len(p) == 4:
+		p[0] = Node('ParParams', children = [p[2]])
+	else:
+		p[0] = Node('ParParams', children = [p[2]] + p[4].children)
 
 def p_Block(p):
 	'''

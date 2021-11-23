@@ -15,13 +15,16 @@ class Node():
 			print(x[0])
 		except:
 			pass
-		print(x.type, d, end = ' ')
-		if fa == None:
-			print('')
+		if isinstance(x, str) == True:
+			print(x, d, end = ' ')
 		else:
-			print('father -> ', fa.type)
-		for i in x.children:
-			self.dfs_test(i, d+1, x)
+			print(x.type, d, end = ' ')
+			if fa == None:
+				print('')
+			else:
+				print('father -> ', fa.type)
+			for i in x.children:
+				self.dfs_test(i, d+1, x)
 	
 	def __str__(self):
 		return self.type + '    ' + self.name + '    ' + str(self.value)
