@@ -93,9 +93,9 @@ def exp(x : Node):
 					# LVal
 				else:
 					node = table.find_array_name(table.tree, x.children[0].name)
-					pos = getPos(x.children[0].children[0])
+					pos = ([0] + getPos(x.children[0].children[0]))
 					new = table.create_val()
-					out = posOut([0] + node.array[x.children[0].name][1])
+					out = node.array[x.children[0].name][1]
 					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], pos),
 						file = outputFile)
 					__new = table.create_val()
@@ -491,9 +491,9 @@ def stmt(x : Node):
 			node = table.find_array_name(table.tree, val.name)
 			exp(x.children[2])
 
-			pos = getPos(val.children[0])
+			pos = posOut([0] + getPos(val.children[0]))
 			new = table.create_val()
-			out = posOut([0] + node.array[val.name][1])
+			out = node.array[val.name][1]
 			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], pos),
 				file = outputFile)
 			print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
