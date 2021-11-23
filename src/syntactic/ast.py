@@ -67,10 +67,7 @@ def exp(x : Node):
 				transBooltoInt(x)
 		elif len(x.children) == 3:
 			x.name = table.create_val()
-			if x.children[0].name == 'getint':
-				print('%s = call i32 @getint()'%(x.name), file = outputFile)
-			elif x.children[0].name == 'getch':
-				print('%s = call i32 @getch()'%(x.name), file = outputFile)
+			print('%s = call i32 @%s()'%(x.name, x.children[0].name), file = outputFile)
 			# Ident LPar RPar
 		elif len(x.children) == 4:
 			exp(x.children[2])
@@ -548,7 +545,6 @@ def getFuncParams(x : Node):
 		name = son.children[1]
 		s = '%x' + str(table.id)
 		table.id += 1
-		table.tree.table[name] = s
 		type = 'i32' if len(son.children) == 2 else 'i32*'
 		if type == 'i32*':
 			table.tree.pointer[name] = s
@@ -574,7 +570,12 @@ def funcDef(x : Node):
 		table.function[name] = (x.children[0].type, params)
 		types = [i[1] + ' ' + i[2] for i in params]
 		print("@%s( %s ){"%(name, ','.join(types)), file = outputFile)
-
+		for p in params:
+			if p[1] == 'i32*':
+				continue
+			s = table.create_val(p[0])
+			print('store i32 %s, i32* %s'%(p[2] ,s), file = outputFile)
+			# Create params value as local value
 	
 	table.funcType = x.children[0].type
 	blockItems(x.children[-1].children[0])
