@@ -180,9 +180,9 @@ def appendArray(size, value):
 			appendArray(size[1:], value[i])
 
 def initValue(x : Node):
-	if x.type == 'ConstInitVals':
+	if x.type == 'ConstInitVals' or x.type == 'InitVals':
 		return ','.join([initValue(x.children[i]) for i in range(len(x.children))])
-	elif x.type == 'ConstInitVal':
+	elif x.type == 'ConstInitVal' or x.type == 'InitVal':
 		if len(x.children) == 0:
 			return '[]'
 		elif len(x.children) == 1:

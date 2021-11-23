@@ -136,7 +136,7 @@ def p_VarDef(p):
 	VarDef : Ident
 		   | Ident ConstSubs
            | Ident Equal InitVal
-		   | Ident ConstSubs Equal ConstInitVals
+		   | Ident ConstSubs Equal InitVals
 	'''
 	x = Node("Ident", name = p[1])
 	if len(p) == 2:
@@ -148,11 +148,28 @@ def p_VarDef(p):
 	else:
 		p[0] = Node('VarDef', children = [x, p[2], p[4]])
 
+def p_InitVals(p):
+	'''
+	InitVals : InitVal
+			 | InitVal Comma InitVals
+	'''
+	if len(p) == 2:
+		p[0] = Node('InitVals', children = [p[1]])
+	else:
+		p[0] = Node('InitVals', children = [p[1], p[3]])
+
 def p_InitVal(p):
 	'''
 	InitVal : Exp
+			| LBrace RBrace
+			| LBrace InitVals RBrace
 	'''
-	p[0] = Node('InitVal', children = p[1:])
+	if len(p) == 2:
+		p[0] = Node('InitVal', children = p[1:])
+	elif len(p) == 3:
+		p[0] = Node('InitVal')
+	else:
+		p[0] = Node('InitVal', children = [Node('{'), p[2], Node('}')])
 
 def p_Funcdef(p):
 	'''
