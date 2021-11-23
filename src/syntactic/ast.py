@@ -558,8 +558,6 @@ def getFuncParams(x : Node):
 		s = '%x' + str(table.id)
 		table.id += 1
 		type = 'i32' if len(son.children) == 2 else 'i32*'
-		if type == 'i32*':
-			table.tree.pointer[name] = s
 		result.append((name, type, s))
 	return result
 
@@ -584,9 +582,14 @@ def funcDef(x : Node):
 		print("@%s( %s ){"%(name, ','.join(types)), file = outputFile)
 		for p in params:
 			if p[1] == 'i32*':
-				continue
-			s = table.create_val(p[0])
-			print('store i32 %s, i32* %s'%(p[2] ,s), file = outputFile)
+				s = '%x' + str(table.id)
+				table.id += 1
+				print('%s = alloca i32*'%(s), file = outputFile)
+				print('store i32* %s, i32** %s'%(p[2], s), file = outputFile)
+				table.tree.pointer[p[0]] = s
+			else:
+				s = table.create_val(p[0])
+				print('store i32 %s, i32* %s'%(p[2] ,s), file = outputFile)
 			# Create params value as local value
 	
 	table.funcType = x.children[0].type
