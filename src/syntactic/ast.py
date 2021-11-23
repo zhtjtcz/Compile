@@ -68,8 +68,11 @@ def exp(x : Node):
 		elif len(x.children) == 3:
 			if x.children[0].name not in table.function.keys():
 				exit(1)
-			x.name = table.create_val()
-			print('%s = call i32 @%s()'%(x.name, x.children[0].name), file = outputFile)
+			if table.function[x.children[0].name][0] == 'Int':
+				x.name = table.create_val()
+				print('%s = call i32 @%s()'%(x.name, x.children[0].name), file = outputFile)
+			else:
+				print('call void @%s()'%(x.children[0].name), file = outputFile)
 			# Ident LPar RPar
 		elif len(x.children) == 4:
 			exp(x.children[2])
@@ -83,7 +86,7 @@ def exp(x : Node):
 				paramstype = [i[1] for i in paramstype]
 				for son in range(len(x.children[2].children)):
 					p.append(' '+ paramstype[son] + ' ' + x.children[2].children[son].name)
-				if table.function[x.children[0].name][0] == 'void':
+				if table.function[x.children[0].name][0] == 'Void':
 					print('call void ', end = '', file = outputFile)
 				else:
 					x.name = table.create_val()
