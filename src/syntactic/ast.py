@@ -95,8 +95,8 @@ def exp(x : Node):
 					node = table.find_array_name(table.tree, x.children[0].name)
 					pos = getPos(x.children[0].children[0])
 					new = table.create_val()
-					out = node.array[x.children[0].name][1]
-					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], posOut([0] + pos)),
+					out = posOut([0] + node.array[x.children[0].name][1])
+					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], pos),
 						file = outputFile)
 					__new = table.create_val()
 					print("%s = load i32, i32* %s"%(__new, new), file = outputFile)
@@ -493,8 +493,8 @@ def stmt(x : Node):
 
 			pos = getPos(val.children[0])
 			new = table.create_val()
-			out = node.array[val.name][1]
-			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], posOut([0] + pos)),
+			out = posOut([0] + node.array[val.name][1])
+			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], pos),
 				file = outputFile)
 			print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
 	# LVal Equal Exp Semicolon
