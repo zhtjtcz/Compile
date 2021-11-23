@@ -66,6 +66,8 @@ def exp(x : Node):
 				print("%s = icmp eq i32 %s, 0"%(x.name, x.children[1].name), file = outputFile)
 				transBooltoInt(x)
 		elif len(x.children) == 3:
+			if x.children[0].name not in table.function.keys():
+				exit(1)
 			x.name = table.create_val()
 			print('%s = call i32 @%s()'%(x.name, x.children[0].name), file = outputFile)
 			# Ident LPar RPar
@@ -74,6 +76,8 @@ def exp(x : Node):
 			if x.children[0].name in ['putint', 'putch']:
 				print('call void @%s(i32 %s)'%(x.children[0].name, x.children[2].children[0].name), file = outputFile)
 			else:
+				if x.children[0].name not in table.function.keys():
+					exit(1)
 				p = []
 				for son in x.children[2].children:
 					p.append(' i32 ' + son.name)

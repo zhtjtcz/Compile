@@ -13,7 +13,7 @@ class BlockTree():
 class Table():
 	def __init__(self):
 		self.tree = BlockTree()
-		self.function = {}
+		self.function = {'getint':'', 'getch':''}
 		self.funcType = 'Int'
 		self.id = 1
 
