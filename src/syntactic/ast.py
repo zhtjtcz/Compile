@@ -542,26 +542,43 @@ def stmt(x : Node):
 		return
 	# If LPar Cond RPar Stmt Else Stmt
 
+def getFuncParams(x : Node):
+	result = []
+	for son in x.children:
+		name = son.children[1]
+		s = '%x' + str(table.id)
+		table.id += 1
+		table.tree.table[name] = s
+		table.tree.pointer[name] = s
+		type = 'i32' if len(son.children) == 2 else 'i32*'
+		result.append((name, type, s))
+	return result
+
 def funcDef(x : Node):
 	name = x.children[1].name
 	if  name in table.function.keys():
 		exit(1)
 	print("define dso_local ", end = '', file = outputFile)
-	if len(x.children) == 3:
-		table.function[name] = x.children[0].type
-		if x.children[0].type == 'Int':
-			print('i32 ', end = '', file = outputFile)
-		else:
-			print('void ', end = '', file = outputFile)
-		print("@%s(){"%(name), file = outputFile)
-		table.into_block()
-		table.funcType = x.children[0].type
-		blockItems(x.children[2].children[0])
-		table.out_block()
-		print('}\n', file = outputFile)
+	table.into_block()
+	if x.children[0].type == 'Int':
+		print('i32 ', end = '', file = outputFile)
 	else:
-		table.funcType = x.children[0].type
-		pass
+		print('void ', end = '', file = outputFile)
+
+	if len(x.children) == 3:
+		table.function[name] = (x.children[0].type, [])
+		print("@%s(){"%(name), file = outputFile)
+	else:
+		params = getFuncParams(x.children[2])
+		table.function[name] = (x.children[0].type, params)
+		types = [i[1] + ' ' + i[2] for i in params]
+		print("@%s( %s ){"%(name, ','.join(types)), file = outputFile)
+
+	
+	table.funcType = x.children[0].type
+	blockItems(x.children[-1].children[0])
+	table.out_block()
+	print('}\n', file = outputFile)
 
 def dfs(x : Node):
 	if x.type == 'CompUnit':

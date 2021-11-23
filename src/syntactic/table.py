@@ -7,6 +7,7 @@ class BlockTree():
 		self.reg = {}
 		self.const = {}
 		self.array = {}
+		self.pointer = {}
 		self.const_array = {}
 
 class Table():
