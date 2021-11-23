@@ -549,8 +549,9 @@ def getFuncParams(x : Node):
 		s = '%x' + str(table.id)
 		table.id += 1
 		table.tree.table[name] = s
-		table.tree.pointer[name] = s
 		type = 'i32' if len(son.children) == 2 else 'i32*'
+		if type == 'i32*':
+			table.tree.pointer[name] = s
 		result.append((name, type, s))
 	return result
 
