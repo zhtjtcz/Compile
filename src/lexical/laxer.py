@@ -3,7 +3,6 @@ import lexical.lex as lex
 # import ply.lex as lex
 
 reserved = {
-	'main': 'Main',
 	'int': 'Int',
 	'return': 'Return',
 	'const': 'Const',
@@ -12,6 +11,7 @@ reserved = {
 	'while': 'While',
 	'break': 'Break',
 	'continue': 'Continue',
+	'void': 'Void',
 }
 
 tokens = [

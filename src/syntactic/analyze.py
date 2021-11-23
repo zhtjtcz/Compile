@@ -11,13 +11,20 @@ def p_CompUnit(p):
 
 def p_Definelist(p):
 	'''
-	Definelist : Decl Definelist
-			   | FuncDef
+	Definelist : Definelist Define
+			   | Define
 	'''
 	if len(p) == 2:
-		p[0] = Node('Definelist', children = p[1:])
+		p[0] = Node('Definelist', children = [p[1]])
 	else:
-		p[0] = Node('Definelist', children = [p[1]] + p[2].children)
+		p[0] = Node('Definelist', children = p[1].children + [p[2]])
+
+def p_Define(p):
+	'''
+	Define : Decl
+		   | FuncDef
+	'''
+	p[0] = Node('Define', children = [p[1]])
 
 def p_Decl(p):
 	'''
@@ -45,8 +52,12 @@ def p_ConstDefs(p):
 def p_BType(p):
 	'''
 	BType : Int
+		  | Void
 	'''
-	p[0] = Node('Int')
+	if p[1] == 'int':
+		p[0] = Node('Int')
+	elif p[1] == 'void':
+		p[0] = Node('Void')
 	# Only one type!
 
 def p_ConstDef(p):
@@ -145,24 +156,20 @@ def p_InitVal(p):
 
 def p_Funcdef(p):
 	'''
-	FuncDef : FuncType Main LPar RPar Block
+	FuncDef : BType Ident LPar RPar Block
 	'''
 	l = Node('LBrace')
 	r = Node('RBrace')
 	x = Node('Ident')
 	p[0] = Node('FuncDef', children = [p[1], x, l, r, p[5]])
 
-def p_FuncType(p):
-	'''
-	FuncType : Int
-	'''
-	p[0] = Node('FuncType', name = p[1])
-
 def p_Block(p):
 	'''
 	Block : LBrace BlockItems RBrace
 	'''
-	p[0] = Node('Block', children = [p[2]])
+	p[0] = Node('Block')
+	if p[2] != None:
+		p[0].children = [p[2]]
 
 def p_BlockItems(p):
 	'''
