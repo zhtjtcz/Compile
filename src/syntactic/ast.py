@@ -97,15 +97,24 @@ def exp(x : Node):
 				print(x.name, '= add i32', '0 ,', str(x.children[0].value), file = outputFile)
 			else:
 				if len(x.children[0].children) == 0:
-					table.create_reg(x.children[0].name)
-					node = table.find_val_name(table.tree, x.children[0].name)
-					print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
-					x.name = table.get_reg(x.children[0].name)
-					# LVal
-				elif x.children[0].name in table.tree.pointer:
+					if table.find_val_name(table.tree, x.children[0].name) != None:
+						table.create_reg(x.children[0].name)
+						node = table.find_val_name(table.tree, x.children[0].name)
+						print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
+						x.name = table.get_reg(x.children[0].name)
+					else:
+						node = table.find_array_name(table.tree, x.children[0].name)
+						new = table.create_val()
+						out = node.array[x.children[0].name][1]
+						x.name = table.create_val()
+						print("%s = getelementptr inbounds %s, %s* %s, %s"%(x.name, arrayOut(out), arrayOut(out), node.array[x.children[0].name][0], posOut([0, 0])),
+							file = outputFile)
+					# LVal or ARRAY NAME!
+				elif table.find_array_name(table.tree, x.children[0].name) == None:
+					node = table.find_pointer(table.tree, x.children[0].name)
 					point = table.create_val()
 					p = table.create_val()
-					print('%s = load i32*, i32** %s'%(p, table.tree.pointer[x.children[0].name]), file = outputFile)
+					print('%s = load i32*, i32** %s'%(p, node.pointer[x.children[0].name]), file = outputFile)
 					pos = posOut(getPos(x.children[0].children[0]))
 					print('%s = getelementptr inbounds i32, i32* %s, %s'%(point, p, pos), file = outputFile)
 					x.name = table.create_val()

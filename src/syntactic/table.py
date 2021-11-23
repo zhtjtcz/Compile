@@ -104,6 +104,14 @@ class Table():
 		else:
 			return self.find_array_name(x.fa, name)
 
+	def find_pointer(self, x : BlockTree, name):
+		if x == None:
+			return None
+		if name in x.pointer.keys():
+			return x
+		else:
+			return self.find_pointer(x.fa, name)
+
 	def get_val(self, name = None):
 		if name == None:
 			exit(1)
