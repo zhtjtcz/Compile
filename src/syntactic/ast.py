@@ -592,6 +592,7 @@ def funcDef(x : Node):
 	table.funcType = x.children[0].type
 	blockItems(x.children[-1].children[0])
 	table.out_block()
+	print('ret i32 0', file = outputFile)
 	print('}\n', file = outputFile)
 
 def dfs(x : Node):
