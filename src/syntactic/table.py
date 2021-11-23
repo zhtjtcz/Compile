@@ -1,5 +1,13 @@
 from values import *
 
+def arrayOut(s):
+	out = 'i32'
+	if isinstance(s, int):
+		s = [s]
+	for i in range(len(s)-1, -1, -1):
+		out = '[' + str(s[i]) + ' x ' + out + ']'
+	return out
+
 class BlockTree():
 	def __init__(self):
 		self.fa = None
@@ -13,7 +21,10 @@ class BlockTree():
 class Table():
 	def __init__(self):
 		self.tree = BlockTree()
-		self.function = {'getint':'', 'getch':''}
+		self.function = {'getint':'', 'getch':'',
+			'getarray':('void', [('a', 'i32*', '%xa')]),
+			'putarray':('void', [('a', 'i32*', '%xa')]),
+		}
 		self.funcType = 'Int'
 		self.id = 1
 
@@ -40,7 +51,7 @@ class Table():
 		else:
 			s = '%x' + str(self.id)
 			self.id += 1
-			print("%s = alloca %s"%(s, size), file = outputFile)
+			print("%s = alloca %s"%(s, arrayOut(size)), file = outputFile)
 			self.tree.array[name] = (s, size)
 			if const == True:
 				self.tree.const_array[name] = (s, size, value)

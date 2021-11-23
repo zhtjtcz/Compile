@@ -79,8 +79,10 @@ def exp(x : Node):
 				if x.children[0].name not in table.function.keys():
 					exit(1)
 				p = []
-				for son in x.children[2].children:
-					p.append(' i32 ' + son.name)
+				paramstype = table.function[x.children[0].name][1]
+				paramstype = [i[1] for i in paramstype]
+				for son in range(len(x.children[2].children)):
+					p.append(' '+ paramstype[son] + ' ' + x.children[2].children[son].name)
 				if table.function[x.children[0].name][1] == 'void':
 					print('call void ', file = outputFile)
 				else:
@@ -111,14 +113,23 @@ def exp(x : Node):
 					# Funcion array
 				else:
 					node = table.find_array_name(table.tree, x.children[0].name)
-					pos = posOut([0] + getPos(x.children[0].children[0]))
+					pos = getPos(x.children[0].children[0])
 					new = table.create_val()
 					out = node.array[x.children[0].name][1]
-					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], pos),
-						file = outputFile)
-					__new = table.create_val()
-					print("%s = load i32, i32* %s"%(__new, new), file = outputFile)
-					x.name = __new
+					if len(out) == len(pos):
+						out = arrayOut(out)
+						print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], posOut([0] + pos)),
+							file = outputFile)
+						x.name = table.create_val()
+						print("%s = load i32, i32* %s"%(x.name, new), file = outputFile)
+					else:
+						pointer = table.create_val()
+						print("%s = getelementptr inbounds %s, %s* %s, %s"%(pointer, arrayOut(out), arrayOut(out), node.array[x.children[0].name][0], posOut([0] + pos)),
+							file = outputFile)
+						x.name = table.create_val()
+						print("%s = getelementptr inbounds %s, %s* %s, %s"%(x.name, arrayOut(out[-1]), arrayOut(out[-1]), pointer, posOut([0, 0])),
+							file = outputFile)
+						# Array pointer!
 					# Array
 		else:
 			exp(x.children[1])
@@ -139,6 +150,8 @@ def checkCanCal(x : Node):
 
 def arrayOut(s):
 	out = 'i32'
+	if isinstance(s, int):
+		s = [s]
 	for i in range(len(s)-1, -1, -1):
 		out = '[' + str(s[i]) + ' x ' + out + ']'
 	return out
@@ -196,7 +209,7 @@ def vardef(x : Node):
 		if val.name in table.tree.array.keys() or val.name in table.tree.const_array.keys():
 			exit(1)
 		size = [globalCal(i) for i in x.children[1].children]
-		name = table.create_array(val.name, arrayOut(size), False)
+		name = table.create_array(val.name, size, False)
 		if len(x.children) == 3:
 			value = eval(initValue(x.children[2]))
 			appendArray(size, value)
@@ -220,7 +233,7 @@ def constdef(x : Node):
 		size = [globalCal(i) for i in x.children[1].children]
 		value = eval(initValue(x.children[2]))
 		appendArray(size, value)
-		name = table.create_array(val.name, arrayOut(size), True, value)
+		name = table.create_array(val.name, size, True, value)
 		fillArray(name, size, value, [0], arrayOut(size))
 	else:
 		val.add = table.create_val(val.name)
@@ -320,7 +333,7 @@ def globalArray(x : Node):
 	appendArray(size, value)
 	initArray(size, value)
 	print(file = outputFile)
-	table.tree.array[x.children[0].name] = (name, arrayOut(size), value)
+	table.tree.array[x.children[0].name] = (name, size, value)
 	# Const global array
 
 def globalConst(x : Node):
@@ -521,7 +534,7 @@ def stmt(x : Node):
 
 			pos = posOut([0] + getPos(val.children[0]))
 			new = table.create_val()
-			out = node.array[val.name][1]
+			out = arrayOut(node.array[val.name][1])
 			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], pos),
 				file = outputFile)
 			print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
