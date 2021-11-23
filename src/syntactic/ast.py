@@ -427,11 +427,17 @@ def stmt(x : Node):
 		return
 	# ;
 
+	if len(x.children) == 1 and x.children[0] == 'return':
+		print('ret void', file = outputFile)
+		return
+	# return;
+
 	if len(x.children) == 1 and x.children[0].type in ['break', 'continue']:
 		if x.children[0].type == 'break':
 			print("br label %s"%(labelTree.node.breakLabel), file = outputFile)
 		else:
 			print("br label %s"%(labelTree.node.continueLabel), file = outputFile)
+		return
 	# break; or continue;
 
 	if len(x.children) == 1 and x.children[0].type == 'Exp':
@@ -532,18 +538,34 @@ def stmt(x : Node):
 		return
 	# If LPar Cond RPar Stmt Else Stmt
 
+def funcDef(x : Node):
+	name = x.children[1].name
+	if  name in table.function.keys():
+		exit(1)
+	print("define dso_local ", end = '', file = outputFile)
+	if len(x.children) == 3:
+		table.function[name] = x.children[0].type
+		if x.children[0].type == 'int':
+			print('i32 ', end = '', file = outputFile)
+		else:
+			print('void ', end = '', file = outputFile)
+		print("@%s(){"%(name), file = outputFile)
+		table.into_block()
+		blockItems(x.children[2].children[0])
+		table.out_block()
+		print('}\n', file = outputFile)
+	else:
+		pass
+
 def dfs(x : Node):
 	if x.type == 'CompUnit':
 		dfs(x.children[0])
 	elif x.type == 'Definelist':
-		for i in x.children[:-1]:
-			globalDefine(i)
-		dfs(x.children[-1])		# Main fuction define	
-	elif x.type == 'FuncDef':
-		print('define dso_local i32 @main(){', file = outputFile)
-		dfs(x.children[-1])
-		print('}', file = outputFile)
-		# TODO check the ident -> lab x
+		for son in x.children:
+			if son.children[0].type == 'Decl':
+				globalDefine(son.children[0])
+			else:
+				funcDef(son.children[0])
 	elif x.type == 'Block':
 		table.into_block()
 		blockItems(x.children[0])

@@ -12,6 +12,7 @@ class BlockTree():
 class Table():
 	def __init__(self):
 		self.tree = BlockTree()
+		self.function = {}
 		self.id = 1
 
 	def create_val(self, name = None):

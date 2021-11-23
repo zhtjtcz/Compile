@@ -228,6 +228,7 @@ def p_Stmt(p):
 		 | Break
 		 | Continue
 		 | Exp Semicolon
+		 | Return Semicolon
 		 | Return Exp Semicolon
 		 | LVal Equal Exp Semicolon
 		 | While LPar Cond RPar Stmt
