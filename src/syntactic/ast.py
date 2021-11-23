@@ -71,10 +71,18 @@ def exp(x : Node):
 			# Ident LPar RPar
 		elif len(x.children) == 4:
 			exp(x.children[2])
-			if x.children[0].name == 'putint':
-				print('call void @putint(i32 %s)'%(x.children[2].children[0].name), file = outputFile)
-			elif x.children[0].name == 'putch':
-				print('call void @putch(i32 %s)'%(x.children[2].children[0].name), file = outputFile)
+			if x.children[0].name in ['putint', 'putch']:
+				print('call void @%s(i32 %s)'%(x.children[0].name, x.children[2].children[0].name), file = outputFile)
+			else:
+				p = []
+				for son in x.children[2].children:
+					p.append(' i32 ' + son.name)
+				if table.function[x.children[0].name][1] == 'void':
+					print('call void ', file = outputFile)
+				else:
+					x.name = table.create_val()
+					print('%s = call i32 '%(x.name), end = '', file = outputFile)
+				print('@%s( %s )'%(x.children[0].name, ','.join(p)), file = outputFile)
 			# Ident LPar FuncRParams RPar
 	elif x.type == 'PrimaryExp':
 		if len(x.children) == 1:
