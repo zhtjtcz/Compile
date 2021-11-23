@@ -13,6 +13,7 @@ class Table():
 	def __init__(self):
 		self.tree = BlockTree()
 		self.function = {}
+		self.funcType = 'Int'
 		self.id = 1
 
 	def create_val(self, name = None):

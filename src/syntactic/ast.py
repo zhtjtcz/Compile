@@ -428,6 +428,8 @@ def stmt(x : Node):
 	# ;
 
 	if len(x.children) == 1 and x.children[0] == 'return':
+		if table.funcType == 'Int':
+			exit(1)
 		print('ret void', file = outputFile)
 		return
 	# return;
@@ -473,6 +475,8 @@ def stmt(x : Node):
 	# While (Cond) Stmt;
 
 	if len(x.children) == 2:
+		if table.funcType == 'Void':
+			exit(1)
 		exp(x.children[1])
 		print('ret i32', file = outputFile, end = ' ')
 		print(x.children[1].name, file = outputFile)
@@ -545,16 +549,18 @@ def funcDef(x : Node):
 	print("define dso_local ", end = '', file = outputFile)
 	if len(x.children) == 3:
 		table.function[name] = x.children[0].type
-		if x.children[0].type == 'int':
+		if x.children[0].type == 'Int':
 			print('i32 ', end = '', file = outputFile)
 		else:
 			print('void ', end = '', file = outputFile)
 		print("@%s(){"%(name), file = outputFile)
 		table.into_block()
+		table.funcType = x.children[0].type
 		blockItems(x.children[2].children[0])
 		table.out_block()
 		print('}\n', file = outputFile)
 	else:
+		table.funcType = x.children[0].type
 		pass
 
 def dfs(x : Node):
