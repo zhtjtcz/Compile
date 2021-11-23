@@ -83,8 +83,8 @@ def exp(x : Node):
 				paramstype = [i[1] for i in paramstype]
 				for son in range(len(x.children[2].children)):
 					p.append(' '+ paramstype[son] + ' ' + x.children[2].children[son].name)
-				if table.function[x.children[0].name][1] == 'void':
-					print('call void ', file = outputFile)
+				if table.function[x.children[0].name][0] == 'void':
+					print('call void ', end = '', file = outputFile)
 				else:
 					x.name = table.create_val()
 					print('%s = call i32 '%(x.name), end = '', file = outputFile)
