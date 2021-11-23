@@ -93,7 +93,7 @@ def exp(x : Node):
 					# LVal
 				else:
 					node = table.find_array_name(table.tree, x.children[0].name)
-					pos = ([0] + getPos(x.children[0].children[0]))
+					pos = posOut([0] + getPos(x.children[0].children[0]))
 					new = table.create_val()
 					out = node.array[x.children[0].name][1]
 					print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[x.children[0].name][0], pos),
