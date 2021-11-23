@@ -625,7 +625,7 @@ def funcDef(x : Node):
 	
 	table.funcType = x.children[0].type
 	blockItems(x.children[-1].children[0])
-	if x.children[0].type == 'int':
+	if x.children[0].type == 'Int':
 		print('ret i32 0', file = outputFile)
 	else:
 		print('ret void', file = outputFile)
