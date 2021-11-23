@@ -100,6 +100,15 @@ def exp(x : Node):
 					print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
 					x.name = table.get_reg(x.children[0].name)
 					# LVal
+				elif x.children[0].name in table.tree.pointer:
+					point = table.create_val()
+					p = table.create_val()
+					print('%s = load i32*, i32** %s'%(p, table.tree.pointer[x.children[0].name]), file = outputFile)
+					pos = posOut(getPos(x.children[0].children[0]))
+					print('%s = getelementptr inbounds i32, i32* %s, %s'%(point, p, pos), file = outputFile)
+					x.name = table.create_val()
+					print('%s = load i32, i32* %s'%(x.name, point), file = outputFile)
+					# Funcion array
 				else:
 					node = table.find_array_name(table.tree, x.children[0].name)
 					pos = posOut([0] + getPos(x.children[0].children[0]))
