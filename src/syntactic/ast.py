@@ -105,14 +105,18 @@ def exp(x : Node):
 						node = table.find_val_name(table.tree, x.children[0].name)
 						print('%s = load i32, i32* %s'%(table.get_reg(x.children[0].name), node.table[x.children[0].name]), file = outputFile)
 						x.name = table.get_reg(x.children[0].name)
-					else:
+					elif table.find_array_name(table.tree, x.children[0].name) != None:
 						node = table.find_array_name(table.tree, x.children[0].name)
 						new = table.create_val()
 						out = node.array[x.children[0].name][1]
 						x.name = table.create_val()
 						print("%s = getelementptr inbounds %s, %s* %s, %s"%(x.name, arrayOut(out), arrayOut(out), node.array[x.children[0].name][0], posOut([0, 0])),
 							file = outputFile)
-					# LVal or ARRAY NAME!
+					else:
+						node = table.find_pointer(table.tree, x.children[0].name)
+						x.name = table.create_val()
+						print('%s = load i32*, i32** %s'%(x.name, node.pointer[x.children[0].name]), file = outputFile)
+					# LVal or ARRAY NAME or POINTER!
 				elif table.find_array_name(table.tree, x.children[0].name) == None:
 					node = table.find_pointer(table.tree, x.children[0].name)
 					point = table.create_val()
@@ -538,17 +542,29 @@ def stmt(x : Node):
 			print('store i32', x.children[2].name, ', i32*', node.table[val.name], file = outputFile)
 			return
 		else:
-			if table.find_array_name(table.tree, val.name) == None:
-				exit(1)
-			node = table.find_array_name(table.tree, val.name)
-			exp(x.children[2])
+			if table.find_array_name(table.tree, val.name) != None:
+				node = table.find_array_name(table.tree, val.name)
+				exp(x.children[2])
 
-			pos = posOut([0] + getPos(val.children[0]))
-			new = table.create_val()
-			out = arrayOut(node.array[val.name][1])
-			print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], pos),
-				file = outputFile)
-			print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
+				pos = posOut([0] + getPos(val.children[0]))
+				new = table.create_val()
+				out = arrayOut(node.array[val.name][1])
+				print("%s = getelementptr inbounds %s, %s* %s, %s"%(new, out, out, node.array[val.name][0], pos),
+					file = outputFile)
+				print("store i32 %s , i32* %s"%(x.children[2].name, new), file = outputFile)
+			elif table.find_pointer(table.tree, val.name) != None:
+				val = x.children[0]
+				node = table.find_pointer(table.tree, val.name)
+				point = table.create_val()
+				p = table.create_val()
+				print('%s = load i32*, i32** %s'%(p, node.pointer[val.name]), file = outputFile)
+				pos = posOut(getPos(val.children[0]))
+				print('%s = getelementptr inbounds i32, i32* %s, %s'%(point, p, pos), file = outputFile)
+				
+				exp(x.children[2])
+				print("store i32 %s , i32* %s"%(x.children[2].name, point), file = outputFile)
+			else:
+				exit(1)
 	# LVal Equal Exp Semicolon
 
 	if len(x.children) == 4:
