@@ -22,7 +22,7 @@ class Table():
 	def __init__(self):
 		self.tree = BlockTree()
 		self.function = {'getint':('Int', []), 'getch':('Int', []),
-			'getarray':('Void', [('a', 'i32*', '%xa')]),
+			'getarray':('Int', [('a', 'i32*', '%xa')]),
 			'putarray':('Void', [('a', 'i32', '%xa'), ('b', 'i32*', '%xb')]),
 		}
 		self.funcType = 'Int'
