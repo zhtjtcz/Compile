@@ -16,6 +16,7 @@ class BlockTree():
 		self.const = {}
 		self.array = {}
 		self.pointer = {}
+		self.pointer_size = {}
 		self.const_array = {}
 
 class Table():

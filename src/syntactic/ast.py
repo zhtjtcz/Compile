@@ -121,9 +121,10 @@ def exp(x : Node):
 					node = table.find_pointer(table.tree, x.children[0].name)
 					point = table.create_val()
 					p = table.create_val()
-					print('%s = load i32*, i32** %s'%(p, node.pointer[x.children[0].name]), file = outputFile)
+					size = node.pointer_size[x.children[0].name]
+					print('%s = load %s, %s* %s'%(p, size, size, node.pointer[x.children[0].name]), file = outputFile)
 					pos = posOut(getPos(x.children[0].children[0]))
-					print('%s = getelementptr inbounds i32, i32* %s, %s'%(point, p, pos), file = outputFile)
+					print('%s = getelementptr inbounds %s, %s %s, %s'%(point, size[:-1], size, p, pos), file = outputFile)
 					x.name = table.create_val()
 					print('%s = load i32, i32* %s'%(x.name, point), file = outputFile)
 					# Funcion array
@@ -556,10 +557,11 @@ def stmt(x : Node):
 				val = x.children[0]
 				node = table.find_pointer(table.tree, val.name)
 				point = table.create_val()
+				size = node.pointer_size[val.name]
 				p = table.create_val()
-				print('%s = load i32*, i32** %s'%(p, node.pointer[val.name]), file = outputFile)
+				print('%s = load %s, %s* %s'%(p, size, size, node.pointer[val.name]), file = outputFile)
 				pos = posOut(getPos(val.children[0]))
-				print('%s = getelementptr inbounds i32, i32* %s, %s'%(point, p, pos), file = outputFile)
+				print('%s = getelementptr inbounds %s, %s %s, %s'%(point, size[:-1], size, p, pos), file = outputFile)
 				
 				exp(x.children[2])
 				print("store i32 %s , i32* %s"%(x.children[2].name, point), file = outputFile)
@@ -606,7 +608,14 @@ def getFuncParams(x : Node):
 		name = son.children[1]
 		s = '%x' + str(table.id)
 		table.id += 1
-		type = 'i32' if len(son.children) == 2 else 'i32*'
+		type = 'i32'
+		if len(son.children) == 4:
+			type = 'i32*'
+		else:
+			size = []
+			for p in son.children[4].children:
+				size.append(globalCal(p))
+			type = arrayOut(size) + '*'
 		result.append((name, type, s))
 	return result
 
@@ -630,12 +639,13 @@ def funcDef(x : Node):
 		types = [i[1] + ' ' + i[2] for i in params]
 		print("@%s( %s ){"%(name, ','.join(types)), file = outputFile)
 		for p in params:
-			if p[1] == 'i32*':
+			if p[1] != 'i32':
 				s = '%x' + str(table.id)
 				table.id += 1
-				print('%s = alloca i32*'%(s), file = outputFile)
-				print('store i32* %s, i32** %s'%(p[2], s), file = outputFile)
+				print('%s = alloca %s'%(s, p[1]), file = outputFile)
+				print('store %s %s, %s* %s'%(p[1], p[2], p[1], s), file = outputFile)
 				table.tree.pointer[p[0]] = s
+				table.tree.pointer_size[p[0]] = p[1]
 			else:
 				s = table.create_val(p[0])
 				print('store i32 %s, i32* %s'%(p[2] ,s), file = outputFile)
