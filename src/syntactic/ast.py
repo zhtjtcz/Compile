@@ -611,7 +611,7 @@ def getFuncParams(x : Node):
 		type = 'i32'
 		if len(son.children) == 4:
 			type = 'i32*'
-		else:
+		elif len(son.children) > 4:
 			size = []
 			for p in son.children[4].children:
 				size.append(globalCal(p))
