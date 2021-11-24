@@ -11,3 +11,5 @@ test.out
 *.ll
 a.c
 test.ll
+test.py
+src/test.py

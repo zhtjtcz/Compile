@@ -42,12 +42,12 @@ def p_ConstDecl(p):
 def p_ConstDefs(p):
 	'''
 	ConstDefs : ConstDef
-			  | ConstDefs Comma ConstDef
+			  | ConstDef Comma ConstDefs
 	'''
 	if len(p) == 2:
 		p[0] = Node('ConstDefs', children = [p[1]])
 	else:
-		p[0] = Node('ConstDefs', children = p[1].children + [p[3]])
+		p[0] = Node('ConstDefs', children = [p[1]] + p[3].children)
 
 def p_BType(p):
 	'''
@@ -63,7 +63,7 @@ def p_BType(p):
 def p_ConstDef(p):
 	'''
 	ConstDef : Ident Equal ConstInitVal
-			 | Ident ConstSubs Equal ConstInitVals
+			 | Ident ConstSubs Equal ConstInitVal
 	'''
 	if len(p) == 4:
 		p[0] = Node('ConstDef', children = [Node('Ident', name = p[1]), p[3]])
@@ -90,24 +90,27 @@ def p_ConstInitVal(p):
 	'''
 	ConstInitVal : ConstExp
 				 | LBrace RBrace
-				 | LBrace ConstInitVals RBrace
+				 | LBrace ConstInitVal RBrace
+				 | LBrace ConstInitVal ConstInitVals RBrace
 	'''
 	if len(p) == 2:
 		p[0] = Node('ConstInitVal', children = p[1:])
 	elif len(p) == 3:
 		p[0] = Node('ConstInitVal')
-	else:
+	elif len(p) == 4:
 		p[0] = Node('ConstInitVal', children = [Node('{'), p[2], Node('}')])
+	else:
+		p[0] = Node('ConstInitVal', children = [Node('{'), p[2]] + p[3].children + [Node('}')])
 
 def p_ConstInitVals(p):
 	'''
-	ConstInitVals : ConstInitVal
-				  | ConstInitVal Comma ConstInitVals
+	ConstInitVals : Comma ConstInitVal
+				  | Comma ConstInitVal ConstInitVals
 	'''
-	if len(p) == 2:
-		p[0] = Node('ConstInitVals', children = [p[1]])
+	if len(p) == 3:
+		p[0] = Node('ConstInitVals', children = [p[2]])
 	else:
-		p[0] = Node('ConstInitVals', children = [p[1], p[3]])
+		p[0] = Node('ConstInitVals', children = [p[2]] + p[3].children)
 
 def p_ConstExp(p):
 	'''
@@ -136,7 +139,7 @@ def p_VarDef(p):
 	VarDef : Ident
 		   | Ident ConstSubs
            | Ident Equal InitVal
-		   | Ident ConstSubs Equal InitVals
+		   | Ident ConstSubs Equal InitVal
 	'''
 	x = Node("Ident", name = p[1])
 	if len(p) == 2:
@@ -150,26 +153,29 @@ def p_VarDef(p):
 
 def p_InitVals(p):
 	'''
-	InitVals : InitVal
-			 | InitVal Comma InitVals
+	InitVals : Comma InitVal
+			 | Comma InitVal InitVals
 	'''
-	if len(p) == 2:
-		p[0] = Node('InitVals', children = [p[1]])
+	if len(p) == 3:
+		p[0] = Node('InitVals', children = [p[2]])
 	else:
-		p[0] = Node('InitVals', children = [p[1], p[3]])
+		p[0] = Node('InitVals', children = [p[2]] + p[3].children)
 
 def p_InitVal(p):
 	'''
 	InitVal : Exp
 			| LBrace RBrace
-			| LBrace InitVals RBrace
+			| LBrace InitVal RBrace
+			| LBrace InitVal InitVals RBrace
 	'''
 	if len(p) == 2:
 		p[0] = Node('InitVal', children = p[1:])
 	elif len(p) == 3:
 		p[0] = Node('InitVal')
-	else:
+	elif len(p) == 4:
 		p[0] = Node('InitVal', children = [Node('{'), p[2], Node('}')])
+	else:
+		p[0] = Node('InitVal', children = [Node('{'), p[2]] + p[3].children + [Node('}')])
 
 def p_Funcdef(p):
 	'''

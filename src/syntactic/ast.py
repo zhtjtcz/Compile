@@ -180,22 +180,20 @@ def appendArray(size, value):
 			appendArray(size[1:], value[i])
 
 def initValue(x : Node):
-	if x.type == 'ConstInitVals' or x.type == 'InitVals':
-		return ','.join([initValue(x.children[i]) for i in range(len(x.children))])
-	elif x.type == 'ConstInitVal' or x.type == 'InitVal':
-		if len(x.children) == 0:
-			return '[]'
-		elif len(x.children) == 1:
-			if table.tree.fa == None:
-				return str(globalCal(x.children[0]))
-				# Golbal
-			else:
-				exp(x.children[0])
-				s = x.children[0].name
-				return s[2:] if s[0] == '%' else s
-				# Value
+	if len(x.children) == 0:
+		return '[]'
+	elif len(x.children) == 1:
+		if table.tree.fa == None:
+			return str(globalCal(x.children[0]))
+			# Golbal
 		else:
-			return '[' + str(initValue(x.children[1])) + ']'
+			exp(x.children[0])
+			s = x.children[0].name
+			return s[2:] if s[0] == '%' else s
+			# Value
+	else:
+		s = ', '.join([str(initValue(x.children[i])) for i in range(1, len(x.children)-1)])
+		return '[' + s + ']'
 
 def posOut(pos : list):
 	a = ['i32 ' + str(i) for i in pos]
@@ -338,6 +336,7 @@ def globalArray(x : Node):
 		value = eval(initValue(x.children[2]))
 	else:
 		value = []
+	print(value)
 	if value == []:
 		value = [0 for i in range(size[-1])]
 		for i in range(len(size)-2, -1, -1):
