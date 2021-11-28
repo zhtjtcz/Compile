@@ -1,6 +1,6 @@
 from values import *
 from syntactic.node import Node
-from syntactic.table import table,globals,labelTree
+from syntactic.table import *
 
 def transInttoBool(x : Node):
 	s = table.create_val()
@@ -405,28 +405,52 @@ def decl(x : Node):
 
 def logicExp(x : Node):
 	if x.type == 'LOrExp':
-		logicExp(x.children[0])
 		if len(x.children) == 1:
+			logicExp(x.children[0])
 			x.name = x.children[0].name
 		else:
+			if ifTree.node != None:
+				flag = table.create_flag()
+				test = table.create_val()
+				ifTree.intoIf(ifTree.node.Then, flag)
+				logicExp(x.children[0])
+				print("%s = icmp sge i32 %s, 0"%(test, x.children[0].name), file = outputFile)
+				print("br i1 %s, label %s, label %s"%(test, ifTree.node.Then, flag), file = outputFile)
+				ifTree.outIf()
+				print(flag[1:] + ':', file = outputFile)
+			else:
+				logicExp(x.children[0])
 			logicExp(x.children[1])
-			x.name = table.create_val()
-			print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			x.name = x.children[1].name
+			# x.name = table.create_val()
+			# print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			# x must be i32!
 	elif x.type == 'LAndExp':
-		logicExp(x.children[0])
 		if len(x.children) == 1:
+			logicExp(x.children[0])
 			x.name = x.children[0].name
 			x.isBool = x.children[0].isBool
 			if x.isBool == True:
 				transBooltoInt(x)
 		else:
+			if ifTree.node != None:
+				flag = table.create_flag()
+				test = table.create_val()
+				ifTree.intoIf(flag, ifTree.node.Else)
+				logicExp(x.children[0])
+				print("%s = icmp eq i32 %s, 0"%(test, x.children[0].name), file = outputFile)
+				print("br i1 %s, label %s, label %s"%(test, ifTree.node.Else, flag), file = outputFile)
+				ifTree.outIf()
+				print(flag[1:] + ':', file = outputFile)
+			else:
+				logicExp(x.children[0])
 			logicExp(x.children[1])
 			for i in range(2):
 				if x.children[i].isBool == False:
 					transInttoBool(x.children[i])
-			x.name = table.create_val()
-			print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			# x.name = table.create_val()
+			# print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			x.name = x.children[1].name
 			transBooltoInt(x)
 			x.isBool = False
 			# x must be i32!
@@ -572,6 +596,7 @@ def stmt(x : Node):
 	if len(x.children) == 4:
 		Then = table.create_flag()
 		Next = table.create_flag()
+		ifTree.intoIf(Then, Next)
 		cond(x.children[0])
 		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Next), file = outputFile)
 		
@@ -580,6 +605,7 @@ def stmt(x : Node):
 		print('br label', Next, file = outputFile)
 
 		print(Next[1:] + ':', file = outputFile)
+		ifTree.outIf()
 		return
 	# If LPar Cond RPar Stmt
 
@@ -587,6 +613,7 @@ def stmt(x : Node):
 		Then = table.create_flag()
 		Else = table.create_flag()
 		Next = table.create_flag()
+		ifTree.intoIf(Then, Else)
 		cond(x.children[0])
 		print("br i1 %s, label %s, label %s"%(x.children[0].name, Then, Else), file = outputFile)
 		
@@ -599,6 +626,7 @@ def stmt(x : Node):
 		print('br label', Next, file = outputFile)
 
 		print(Next[1:] + ':', file = outputFile)
+		ifTree.outIf()
 		return
 	# If LPar Cond RPar Stmt Else Stmt
 

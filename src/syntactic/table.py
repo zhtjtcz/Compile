@@ -155,6 +155,24 @@ class LabelTree():
 	def outWhile(self):
 		self.node = self.node.fa
 
+class CondTree():
+	def __init__(self):
+		self.fa = None
+		self.node = None
+		self.Then = ''
+		self.Else = ''
+	
+	def intoIf(self, ThenLabel = '', ElseLabel = ''):
+		newNode = CondTree()
+		newNode.Then = ThenLabel
+		newNode.Else = ElseLabel
+		newNode.fa = self.node
+		self.node = newNode
+
+	def outIf(self):
+		self.node = self.node.fa
+
 table = Table()
 globals = {}
 labelTree = LabelTree()
+ifTree = CondTree()
