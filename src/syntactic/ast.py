@@ -331,7 +331,7 @@ def globalCal(x : Node):
 
 def initArray(size, value):
 	if len(size) == 1:
-		if value.count(0) == len(value) and len(value) > 100:
+		if value.count(0) == len(value) and len(value) > 5:
 			print("zeroinitializer", file = outputFile, end = '')
 		else:
 			print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
@@ -357,8 +357,10 @@ def globalArray(x : Node):
 		value = [0 for i in range(size[-1])]
 		for i in range(len(size)-2, -1, -1):
 			value = [value.copy() for j in range(size[i])]
-	appendArray(size, value)
-	initArray(size, value)
+		print("zeroinitializer", file = outputFile)
+	else:
+		appendArray(size, value)
+		initArray(size, value)
 	print(file = outputFile)
 	table.tree.array[x.children[0].name] = (name, size, value)
 	# Const global array
