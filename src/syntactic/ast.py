@@ -414,7 +414,7 @@ def logicExp(x : Node):
 				test = table.create_val()
 				ifTree.intoIf(ifTree.node.Then, flag)
 				logicExp(x.children[0])
-				print("%s = icmp sge i32 %s, 0"%(test, x.children[0].name), file = outputFile)
+				print("%s = icmp sgt i32 %s, 0"%(test, x.children[0].name), file = outputFile)
 				print("br i1 %s, label %s, label %s"%(test, ifTree.node.Then, flag), file = outputFile)
 				ifTree.outIf()
 				print(flag[1:] + ':', file = outputFile)
