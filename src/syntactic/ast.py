@@ -227,7 +227,12 @@ def vardef(x : Node):
 		name = table.create_array(val.name, size, False)
 		if len(x.children) == 3:
 			value = eval(initValue(x.children[2]))
-			appendArray(size, value)
+			if value == []:
+				value = [0 for i in range(size[-1])]
+				for i in range(len(size)-2, -1, -1):
+					value = [value.copy() for j in range(size[i])]
+			else:
+				appendArray(size, value)
 			fillArray(name, size, value, [0], arrayOut(size))
 	else:
 		val.add = table.create_val(val.name)
