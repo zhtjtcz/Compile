@@ -211,6 +211,12 @@ def fillArray(name, size, value, pos, out):
 				x = table.create_val()
 				print("%s = getelementptr inbounds %s, %s* %s, %s"%(x, out, out, name, posOut(pos + [i])), file = outputFile)
 				print("store i32 %%x%d, i32* %s"%(value[i], x), file = outputFile)
+			else:
+				val = table.create_val()
+				print("%s = add i32 0, 0"%(val), file = outputFile)
+				x = table.create_val()
+				print("%s = getelementptr inbounds %s, %s* %s, %s"%(x, out, out, name, posOut(pos + [i])), file = outputFile)
+				print("store i32 %s, i32* %s"%(val, x), file = outputFile)
 		# Fill it
 	else:
 		for i in range(size[0]):
