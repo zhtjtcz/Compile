@@ -30,8 +30,8 @@ def exp(x : Node):
 			exp(x.children[0])
 			x.name = x.children[0].name
 		else:
-			exp(x.children[2])
 			exp(x.children[0])
+			exp(x.children[2])
 			x.name = table.create_val()
 			if x.children[1].type == '+':
 				print(x.name, '= add i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
@@ -42,8 +42,8 @@ def exp(x : Node):
 			exp(x.children[0])
 			x.name = x.children[0].name
 		else:
-			exp(x.children[2])
 			exp(x.children[0])
+			exp(x.children[2])
 			x.name = table.create_val()
 			if x.children[1].type == '*':
 				print(x.name, '= mul i32', x.children[0].name, ',', x.children[2].name, file = outputFile)
@@ -421,9 +421,11 @@ def logicExp(x : Node):
 			else:
 				logicExp(x.children[0])
 			logicExp(x.children[1])
-			x.name = x.children[1].name
-			# x.name = table.create_val()
-			# print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
+			if ifTree.node != None:
+				x.name = x.children[1].name
+			else:
+				x.name = table.create_val()
+				print("%s = or i32 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			# x must be i32!
 	elif x.type == 'LAndExp':
 		if len(x.children) == 1:
@@ -448,9 +450,11 @@ def logicExp(x : Node):
 			for i in range(2):
 				if x.children[i].isBool == False:
 					transInttoBool(x.children[i])
-			# x.name = table.create_val()
-			# print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
-			x.name = x.children[1].name
+			if ifTree.node != None:
+				x.name = x.children[1].name
+			else:
+				x.name = table.create_val()
+				print("%s = and i1 %s, %s"%(x.name, x.children[0].name, x.children[1].name), file = outputFile)
 			transBooltoInt(x)
 			x.isBool = False
 			# x must be i32!
