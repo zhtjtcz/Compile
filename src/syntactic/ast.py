@@ -211,6 +211,12 @@ def fillArray(name, size, value, pos, out):
 				x = table.create_val()
 				print("%s = getelementptr inbounds %s, %s* %s, %s"%(x, out, out, name, posOut(pos + [i])), file = outputFile)
 				print("store i32 %%x%d, i32* %s"%(value[i], x), file = outputFile)
+			else:
+				val = table.create_val()
+				print("%s = add i32 0, 0"%(val), file = outputFile)
+				x = table.create_val()
+				print("%s = getelementptr inbounds %s, %s* %s, %s"%(x, out, out, name, posOut(pos + [i])), file = outputFile)
+				print("store i32 %s, i32* %s"%(val, x), file = outputFile)
 		# Fill it
 	else:
 		for i in range(size[0]):
@@ -227,7 +233,12 @@ def vardef(x : Node):
 		name = table.create_array(val.name, size, False)
 		if len(x.children) == 3:
 			value = eval(initValue(x.children[2]))
-			appendArray(size, value)
+			if value == []:
+				value = [0 for i in range(size[-1])]
+				for i in range(len(size)-2, -1, -1):
+					value = [value.copy() for j in range(size[i])]
+			else:
+				appendArray(size, value)
 			fillArray(name, size, value, [0], arrayOut(size))
 	else:
 		val.add = table.create_val(val.name)
@@ -320,7 +331,7 @@ def globalCal(x : Node):
 
 def initArray(size, value):
 	if len(size) == 1:
-		if value.count(0) == len(value) and len(value) > 100:
+		if value.count(0) == len(value) and len(value) > 5:
 			print("zeroinitializer", file = outputFile, end = '')
 		else:
 			print('[' +','.join(['i32 ' + str(i) for i in value]) + ']', file = outputFile, end ='')
@@ -346,8 +357,10 @@ def globalArray(x : Node):
 		value = [0 for i in range(size[-1])]
 		for i in range(len(size)-2, -1, -1):
 			value = [value.copy() for j in range(size[i])]
-	appendArray(size, value)
-	initArray(size, value)
+		print("zeroinitializer", file = outputFile)
+	else:
+		appendArray(size, value)
+		initArray(size, value)
 	print(file = outputFile)
 	table.tree.array[x.children[0].name] = (name, size, value)
 	# Const global array
